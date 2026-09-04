@@ -1,0 +1,5 @@
+const nav=document.querySelector('.nav'), progress=document.querySelector('.progress');
+addEventListener('scroll',()=>{nav.classList.toggle('scrolled',scrollY>20);progress.style.width=`${scrollY/(document.documentElement.scrollHeight-innerHeight)*100}%`},{passive:true});
+const menu=document.querySelector('.menu');menu.addEventListener('click',()=>{const open=nav.classList.toggle('open');menu.setAttribute('aria-expanded',open)});document.querySelectorAll('nav a').forEach(a=>a.addEventListener('click',()=>nav.classList.remove('open')));
+const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}}),{threshold:.12});document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+document.querySelector('form').addEventListener('submit',e=>{e.preventDefault();e.currentTarget.querySelector('.form-note').textContent='Thanks — connect this form to your preferred email or CRM service before publishing.'});
