@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — Munish Prabhu K</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="../responsive.css" />
+  <style>
+    body {
+      padding: 40px 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 20px;
+    }
+    .tabs {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .tab {
+      padding: 10px 20px;
+      background: #101520;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--muted);
+      font: 500 14px 'DM Mono', monospace;
+    }
+    .tab.active {
+      background: rgba(120, 169, 255, 0.1);
+      border-color: var(--blue);
+      color: #fff;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .list-item {
+      background: #101520;
+      border: 1px solid var(--line);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .list-item h4 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+    .list-item p {
+      font-size: 14px;
+      color: var(--muted);
+      margin: 0 0 10px;
+    }
+    .actions-btn {
+      display: flex;
+      gap: 10px;
+    }
+    .btn-small {
+      padding: 6px 12px;
+      background: #1a2333;
+      border: 1px solid #2d3b55;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .btn-small.danger {
+      background: #3d1b1b;
+      border-color: #5c2424;
+      color: #ff8a8a;
+    }
+    .form-container {
+      background: #0b0f18;
+      border: 1px solid var(--line);
+      padding: 25px;
+      border-radius: 8px;
+      margin-top: 30px;
+    }
+    .form-container h3 {
+      margin-top: 0;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      font: 12px 'DM Mono', monospace;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      background: #101520;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'Manrope', sans-serif;
+    }
+    .form-group input[type="checkbox"] {
+      width: auto;
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2>Admin Dashboard</h2>
+    <button id="logout-btn" class="btn-small">Log out</button>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-target="work-tab">Work Items</div>
+    <div class="tab" data-target="exp-tab">Experience Items</div>
+  </div>
+
+  <!-- Work Tab -->
+  <div id="work-tab" class="tab-content active">
+    <h3>Work Items</h3>
+    <div id="work-list">Loading...</div>
+
+    <div class="form-container">
+      <h3 id="work-form-title">Add New Work</h3>
+      <form id="work-form">
+        <input type="hidden" id="work-id" />
+        <div class="form-group">
+          <label>Order (Number)</label>
+          <input type="number" id="work-order" required />
+        </div>
+        <div class="form-group">
+          <label>Tag Line (e.g. MARKET RESEARCH / BRAND)</label>
+          <input type="text" id="work-tag" required />
+        </div>
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="work-title" required />
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="work-desc" required></textarea>
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" id="work-large" /> Is Large Featured Card?</label>
+        </div>
+        <div class="form-group">
+          <label>Link URL (Optional, e.g. index.html#contact)</label>
+          <input type="text" id="work-link-url" />
+        </div>
+        <div class="form-group">
+          <label>Link Label (Optional, e.g. Discuss a project)</label>
+          <input type="text" id="work-link-label" />
+        </div>
+        <button type="submit" class="button">Save Work</button>
+        <button type="button" class="btn-small" onclick="resetWorkForm()" style="margin-left: 10px;">Cancel Edit</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Experience Tab -->
+  <div id="exp-tab" class="tab-content">
+    <h3>Experience Items</h3>
+    <div id="exp-list">Loading...</div>
+
+    <div class="form-container">
+      <h3 id="exp-form-title">Add New Experience</h3>
+      <form id="exp-form">
+        <input type="hidden" id="exp-id" />
+        <div class="form-group">
+          <label>Order (Number)</label>
+          <input type="number" id="exp-order" required />
+        </div>
+        <div class="form-group">
+          <label>Date Range (e.g. Sep 2025 — Apr 2026)</label>
+          <input type="text" id="exp-date" required />
+        </div>
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="exp-title" required />
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="exp-desc" required></textarea>
+        </div>
+        <button type="submit" class="button">Save Experience</button>
+        <button type="button" class="btn-small" onclick="resetExpForm()" style="margin-left: 10px;">Cancel Edit</button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { supabase } from '../supabase-config.js';
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Auth Check
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      document.getElementById('logout-btn').addEventListener('click', async () => {
+        await supabase.auth.signOut();
+        window.location.href = 'login.html';
+      });
+
+      // Tabs Logic
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          tab.classList.add('active');
+          document.getElementById(tab.getAttribute('data-target')).classList.add('active');
+        });
+      });
+
+      // Fetch and Render Work
+      async function loadWork() {
+        const { data, error } = await supabase.from('work_items').select('*').order('order', { ascending: true });
+        const list = document.getElementById('work-list');
+        if (error) { list.innerHTML = `<p style="color:red">Error: ${error.message}</p>`; return; }
+        
+        list.innerHTML = data.length ? data.map(item => `
+          <div class="list-item">
+            <div>
+              <h4>${item.title} ${item.is_large ? '<span style="font-size:12px; color:var(--blue)">(Large)</span>' : ''}</h4>
+              <p>${item.tag_line}</p>
+              <p>Order: ${item.order}</p>
+            </div>
+            <div class="actions-btn">
+              <button class="btn-small" onclick='editWork(${JSON.stringify(item).replace(/'/g, "&#39;")})'>Edit</button>
+              <button class="btn-small danger" onclick="deleteWork('${item.id}')">Delete</button>
+            </div>
+          </div>
+        `).join('') : '<p>No work items found.</p>';
+      }
+
+      // Fetch and Render Experience
+      async function loadExp() {
+        const { data, error } = await supabase.from('experience_items').select('*').order('order', { ascending: true });
+        const list = document.getElementById('exp-list');
+        if (error) { list.innerHTML = `<p style="color:red">Error: ${error.message}</p>`; return; }
+        
+        list.innerHTML = data.length ? data.map(item => `
+          <div class="list-item">
+            <div>
+              <h4>${item.title}</h4>
+              <p>${item.date_range}</p>
+              <p>Order: ${item.order}</p>
+            </div>
+            <div class="actions-btn">
+              <button class="btn-small" onclick='editExp(${JSON.stringify(item).replace(/'/g, "&#39;")})'>Edit</button>
+              <button class="btn-small danger" onclick="deleteExp('${item.id}')">Delete</button>
+            </div>
+          </div>
+        `).join('') : '<p>No experience items found.</p>';
+      }
+
+      loadWork();
+      loadExp();
+
+      // Form Submits
+      document.getElementById('work-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('work-id').value;
+        const payload = {
+          order: parseInt(document.getElementById('work-order').value),
+          tag_line: document.getElementById('work-tag').value,
+          title: document.getElementById('work-title').value,
+          description: document.getElementById('work-desc').value,
+          is_large: document.getElementById('work-large').checked,
+          link_url: document.getElementById('work-link-url').value,
+          link_label: document.getElementById('work-link-label').value,
+        };
+        
+        if (id) {
+          const { error } = await supabase.from('work_items').update(payload).eq('id', id);
+          if (error) alert('Error updating work: ' + error.message);
+        } else {
+          const { error } = await supabase.from('work_items').insert(payload);
+          if (error) alert('Error inserting work: ' + error.message);
+        }
+        resetWorkForm();
+        loadWork();
+      });
+
+      document.getElementById('exp-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('exp-id').value;
+        const payload = {
+          order: parseInt(document.getElementById('exp-order').value),
+          date_range: document.getElementById('exp-date').value,
+          title: document.getElementById('exp-title').value,
+          description: document.getElementById('exp-desc').value,
+        };
+        
+        if (id) {
+          const { error } = await supabase.from('experience_items').update(payload).eq('id', id);
+          if (error) alert('Error updating experience: ' + error.message);
+        } else {
+          const { error } = await supabase.from('experience_items').insert(payload);
+          if (error) alert('Error inserting experience: ' + error.message);
+        }
+        resetExpForm();
+        loadExp();
+      });
+
+      // Global functions for inline onclick handlers
+      window.editWork = (item) => {
+        document.getElementById('work-form-title').innerText = 'Edit Work';
+        document.getElementById('work-id').value = item.id;
+        document.getElementById('work-order').value = item.order;
+        document.getElementById('work-tag').value = item.tag_line;
+        document.getElementById('work-title').value = item.title;
+        document.getElementById('work-desc').value = item.description;
+        document.getElementById('work-large').checked = item.is_large;
+        document.getElementById('work-link-url').value = item.link_url || '';
+        document.getElementById('work-link-label').value = item.link_label || '';
+      };
+
+      window.resetWorkForm = () => {
+        document.getElementById('work-form-title').innerText = 'Add New Work';
+        document.getElementById('work-form').reset();
+        document.getElementById('work-id').value = '';
+      };
+
+      window.deleteWork = async (id) => {
+        if(confirm('Are you sure you want to delete this?')) {
+          const { error } = await supabase.from('work_items').delete().eq('id', id);
+          if (error) alert('Error deleting work: ' + error.message);
+          loadWork();
+        }
+      };
+
+      window.editExp = (item) => {
+        document.getElementById('exp-form-title').innerText = 'Edit Experience';
+        document.getElementById('exp-id').value = item.id;
+        document.getElementById('exp-order').value = item.order;
+        document.getElementById('exp-date').value = item.date_range;
+        document.getElementById('exp-title').value = item.title;
+        document.getElementById('exp-desc').value = item.description;
+      };
+
+      window.resetExpForm = () => {
+        document.getElementById('exp-form-title').innerText = 'Add New Experience';
+        document.getElementById('exp-form').reset();
+        document.getElementById('exp-id').value = '';
+      };
+
+      window.deleteExp = async (id) => {
+        if(confirm('Are you sure you want to delete this?')) {
+          const { error } = await supabase.from('experience_items').delete().eq('id', id);
+          if (error) alert('Error deleting experience: ' + error.message);
+          loadExp();
+        }
+      };
+    });
+  </script>
+</body>
+</html>

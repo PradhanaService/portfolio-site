@@ -199,9 +199,19 @@
     order: 3;
     width: 100%;
   }
+  .decor-chart {
+    display: none;
+  }
+  .decor-pill {
+    font-size: 10px;
+    opacity: 0.25;
+  }
 }
 
 @media (max-width: 390px) {
+  #cobe {
+    display: none !important;
+  }
   .hero {
     padding-left: 20px;
     padding-right: 20px;

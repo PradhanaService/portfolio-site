@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login — Munish Prabhu K</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="../responsive.css" />
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: var(--bg);
+    }
+    .login-container {
+      background: #101520;
+      padding: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    .login-container h1 {
+      font-size: 24px;
+      margin-bottom: 24px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .form-group label {
+      display: block;
+      font: 12px 'DM Mono', monospace;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      background: #080b12;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'Manrope', sans-serif;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--blue);
+    }
+    .error-msg {
+      color: #ff6b6b;
+      font-size: 13px;
+      margin-bottom: 15px;
+      display: none;
+    }
+    .button {
+      width: 100%;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <a class="brand" href="../index.html" style="display:inline-block; margin-bottom: 20px;">MPK<span>•</span></a>
+    <h1>Admin Access</h1>
+    <div class="error-msg" id="error-msg"></div>
+    <form id="login-form">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" required />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" required />
+      </div>
+      <button type="submit" class="button">Log in</button>
+    </form>
+  </div>
+
+  <script type="module">
+    import { supabase } from '../supabase-config.js';
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Check if already logged in
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        window.location.href = 'dashboard.html';
+      }
+
+      document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const errorMsg = document.getElementById('error-msg');
+        
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: email,
+          password: password,
+        });
+
+        if (error) {
+          errorMsg.textContent = error.message;
+          errorMsg.style.display = 'block';
+        } else {
+          window.location.href = 'dashboard.html';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
