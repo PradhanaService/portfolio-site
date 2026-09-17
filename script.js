@@ -46,6 +46,44 @@ window.initHeroAutoScroll = () => {
   }, 1000);
 };
 
+window.initGridGlow = () => {
+  const heroGrid = document.querySelector('.hero-grid');
+  if (!heroGrid || window.innerWidth > 768) return; // Only on mobile/tablet
+
+  const cellSize = 54;
+  const numGlows = 12; // Number of simultaneous glowing cells
+  
+  for(let i = 0; i < numGlows; i++) {
+    const glow = document.createElement('div');
+    glow.classList.add('grid-glow');
+    heroGrid.appendChild(glow);
+    
+    // Initial random delay to stagger the animations
+    setTimeout(() => animateGlow(glow, cellSize), Math.random() * 2000);
+  }
+  
+  function animateGlow(el, size) {
+    if(!heroGrid.clientWidth) return; // safety
+    
+    const cols = Math.floor(heroGrid.clientWidth / size);
+    const rows = Math.floor(heroGrid.clientHeight / size);
+    
+    const col = Math.floor(Math.random() * cols);
+    const row = Math.floor(Math.random() * rows);
+    
+    el.style.left = `${col * size}px`;
+    el.style.top = `${row * size}px`;
+    
+    el.style.animation = 'none';
+    el.offsetHeight; 
+    
+    const duration = 2000 + Math.random() * 3000;
+    el.style.animation = `glowFade ${duration}ms ease-in-out forwards`;
+    
+    setTimeout(() => animateGlow(el, size), duration + 200);
+  }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   const nav = document.querySelector('.nav');
   const progress = document.querySelector('.progress');
@@ -216,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial call on load
   window.initTimeline();
   window.initHeroAutoScroll();
-
+  window.initGridGlow();
   window.initSkillCards();
 });
 
@@ -295,6 +333,10 @@ document.querySelectorAll('nav a, header a.brand, footer a').forEach(link => {
 
       if (window.initSkillCards) {
         window.initSkillCards();
+      }
+      
+      if (window.initGridGlow) {
+        window.initGridGlow();
       }
       
       initGlobe();

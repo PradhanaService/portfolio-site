@@ -17,15 +17,15 @@ export function initGlobe() {
   }, { threshold: 0 });
   observer.observe(canvas);
 
-  const COLOR_CONTINENT = '#153154'; 
-  const COLOR_NODE = '#aa90ff';
-  const COLOR_ARC = '#78a9ff';
-  const COLOR_PULSE = '#ffffff';
-  const COLOR_GLOW = '#78a9ff';
+  const COLOR_CONTINENT = '#475569'; 
+  const COLOR_NODE = '#38BDF8';
+  const COLOR_ARC = '#2563EB';
+  const COLOR_PULSE = '#F8FAFC';
+  const COLOR_GLOW = '#2563EB';
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
-  camera.position.z = 2.6;
+  camera.position.z = 2.9;
 
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -56,7 +56,7 @@ export function initGlobe() {
     const imgData = ctx.getImageData(0, 0, img.width, img.height).data;
 
     const radius = 1;
-    const numPoints = 35000;
+    const numPoints = 65000;
     const positions = [];
     const validPoints = [];
     
@@ -90,7 +90,7 @@ export function initGlobe() {
       color: new THREE.Color(COLOR_CONTINENT),
       size: 0.015,
       transparent: true,
-      opacity: 0.9,
+      opacity: 1.0,
       sizeAttenuation: true
     });
     const continentMesh = new THREE.Points(dotGeo, dotMat);
@@ -102,7 +102,7 @@ export function initGlobe() {
   // Base sphere for dark oceans
   const oceanGeo = new THREE.SphereGeometry(0.99, 32, 32);
   const oceanMat = new THREE.MeshBasicMaterial({
-    color: 0x050810,
+    color: 0x0F172A,
     transparent: true,
     opacity: 0.85
   });
@@ -148,7 +148,7 @@ export function initGlobe() {
     if(landPoints.length < 20) return;
     
     const surfaceNodes = [];
-    for(let i=0; i<25; i++) {
+    for(let i=0; i<120; i++) {
       surfaceNodes.push(landPoints[Math.floor(Math.random() * landPoints.length)]);
     }
 
@@ -161,7 +161,7 @@ export function initGlobe() {
     globeGroup.add(nodesMesh);
 
     const arcsGroup = new THREE.Group();
-    for(let i=0; i<18; i++) {
+    for(let i=0; i<80; i++) {
       const startNode = surfaceNodes[Math.floor(Math.random() * surfaceNodes.length)];
       const endNode = surfaceNodes[Math.floor(Math.random() * surfaceNodes.length)];
       if(startNode === endNode) continue;
@@ -174,7 +174,7 @@ export function initGlobe() {
       const curve = new THREE.QuadraticBezierCurve3(startNode, mid, endNode);
       const curvePoints = curve.getPoints(30);
       const curveGeo = new THREE.BufferGeometry().setFromPoints(curvePoints);
-      const curveMat = new THREE.LineBasicMaterial({ color: COLOR_ARC, transparent: true, opacity: 0.25, linewidth: 1 });
+      const curveMat = new THREE.LineBasicMaterial({ color: COLOR_ARC, transparent: true, opacity: 0.4, linewidth: 1 });
       arcsGroup.add(new THREE.Line(curveGeo, curveMat));
 
       const pulseGeo = new THREE.BufferGeometry().setFromPoints([startNode]);

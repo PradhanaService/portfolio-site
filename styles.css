@@ -1,14 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --bg: #080b12;
-  --panel: #101520;
-  --line: rgba(214, 227, 255, 0.14);
-  --text: #f1f4fa;
-  --muted: #9aa6ba;
-  --blue: #78a9ff;
-  --violet: #aa90ff;
-  --whatsapp: #25d366;
+  --bg: #0F172A; /* Option 1 Primary */
+  --panel: #1E293B; /* Option 1 Text */
+  --line: rgba(226, 232, 240, 0.15); /* Border/Dividers */
+  --text: #F8FAFC; /* Option 1 Background */
+  --muted: #94A3B8; /* Slate 400 */
+  --blue: #38BDF8; /* Option 1 Accent */
+  --violet: #2563EB; /* Option 1 Secondary */
+  --whatsapp: #10B981; /* Success Green */
 }
 
 * {
@@ -48,13 +48,13 @@ body {
   align-items: center;
   gap: 28px;
   transition: 0.3s;
-  background: #080b12ee;
+  background: rgba(15, 23, 42, 0.93); /* from --bg #0F172A */
   border-bottom: 1px solid transparent;
 }
 
 .nav.scrolled {
   backdrop-filter: blur(18px);
-  background: #080b12dd;
+  background: rgba(15, 23, 42, 0.85);
   border-bottom: 1px solid var(--line);
 }
 
@@ -238,6 +238,47 @@ nav a.active {
   }
 }
 
+/* Traversing Data Streams */
+.data-streams {
+  position: absolute;
+  top: 40px;
+  bottom: 40px;
+  right: -350px; 
+  width: 450px;  
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.stream {
+  position: absolute;
+  height: 1.5px;
+  background: linear-gradient(270deg, transparent 0%, rgba(56, 189, 248, 0.8) 70%, #fff 100%);
+  border-radius: 2px;
+  opacity: 0;
+  left: 100%;
+  box-shadow: 0 0 10px 1px rgba(56, 189, 248, 0.5);
+}
+
+.stream::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -1.5px;
+  width: 4px;
+  height: 4px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 14px 4px var(--blue), 0 0 6px 2px #fff;
+}
+
+@keyframes streamMove {
+  0% { transform: translateX(0); opacity: 0; }
+  5% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateX(-650px); opacity: 0; }
+}
+
 .hero {
   min-height: 780px;
   position: relative;
@@ -255,6 +296,24 @@ nav a.active {
   background-image: linear-gradient(#87a6ff0e 1px, transparent 1px), linear-gradient(90deg, #87a6ff0e 1px, transparent 1px);
   background-size: 54px 54px;
   mask-image: linear-gradient(#0008, transparent);
+  overflow: hidden;
+}
+
+.grid-glow {
+  position: absolute;
+  width: 53px;
+  height: 53px;
+  background: rgba(120, 169, 255, 0.12);
+  box-shadow: 0 0 20px rgba(120, 169, 255, 0.2), inset 0 0 10px rgba(120, 169, 255, 0.1);
+  border-radius: 2px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes glowFade {
+  0% { opacity: 0; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.8); }
 }
 
 .orb {
@@ -479,7 +538,7 @@ em {
 
 
 .expertise {
-  background: #0b0f18;
+  background: var(--bg);
 }
 
 .skill-grid {
@@ -495,7 +554,7 @@ em {
 
 .skill {
   min-height: 290px;
-  background: #0b0f18;
+  background: var(--bg);
   padding: 30px 26px;
   position: relative;
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.35s cubic-bezier(0.22, 1, 0.36, 1);
@@ -513,7 +572,7 @@ em {
 }
 
 .skill:hover, .skill.is-expanded {
-  background: #111b30;
+  background: var(--panel);
   transform: translateY(-4px);
   z-index: 10;
 }
@@ -624,17 +683,19 @@ em {
 
 .meter-track {
   width: 100%;
-  height: 6px;
+  height: 10px;
   background: rgba(255, 255, 255, 0.08);
-  border-radius: 30px;
+  border-radius: 2px;
   position: relative;
+  -webkit-mask-image: repeating-linear-gradient(90deg, #000 0%, #000 calc(5% - 2px), transparent calc(5% - 2px), transparent 5%);
+  mask-image: repeating-linear-gradient(90deg, #000 0%, #000 calc(5% - 2px), transparent calc(5% - 2px), transparent 5%);
 }
 
 .meter-fill {
   height: 100%;
   width: 0%;
   background: linear-gradient(90deg, #3a4a8c, #6b8fff);
-  border-radius: 30px;
+  border-radius: 2px;
   position: relative;
 }
 
@@ -702,7 +763,7 @@ em {
 
 .service-list article:hover {
   padding-left: 13px;
-  background: #0d121d;
+  background: var(--panel);
 }
 
 .service-list span {
@@ -1266,80 +1327,7 @@ footer div {
   100% { rotate: calc(var(--angle) * -1 - 360deg); }
 }
 
-/* 3D Social Buttons */
-.social-3d-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-}
 
-.social-3d-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 20px 10px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(120, 169, 255, 0.15);
-  border-radius: 16px;
-  text-decoration: none;
-  color: #d6e1f5;
-  backdrop-filter: blur(8px);
-  transform-style: preserve-3d;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  position: relative;
-  overflow: hidden;
-}
-
-.social-3d-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transform: skewX(-20deg);
-  transition: left 0.5s ease;
-}
-
-.social-3d-btn:hover::before {
-  left: 150%;
-}
-
-.social-3d-btn:hover {
-  background: rgba(120, 169, 255, 0.1);
-  border-color: rgba(120, 169, 255, 0.4);
-  transform: translateY(-8px) translateZ(20px) rotateX(10deg);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(120, 169, 255, 0.2);
-  color: #fff;
-}
-
-.social-icon {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
-  box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), 0 4px 10px rgba(0,0,0,0.3);
-  transition: transform 0.3s ease;
-  transform: translateZ(10px);
-}
-
-.social-3d-btn:hover .social-icon {
-  transform: translateZ(25px) scale(1.1);
-  color: var(--blue);
-}
-
-.social-name {
-  font-size: 13px;
-  width: 4px;
-  height: 4px;
-  animation-delay: 0.6s;
-}
 
 @keyframes pulse-dot {
   0% {
@@ -1466,6 +1454,7 @@ footer div {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
+  perspective: 1000px;
 }
 
 .social-3d-btn {
@@ -1475,14 +1464,17 @@ footer div {
   justify-content: center;
   gap: 10px;
   padding: 20px 10px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(120, 169, 255, 0.15);
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+  border: 1px solid rgba(120, 169, 255, 0.1);
+  border-bottom: 5px solid rgba(9, 12, 21, 1);
   border-radius: 16px;
   text-decoration: none;
   color: #d6e1f5;
-  backdrop-filter: blur(8px);
-  transform-style: preserve-3d;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    0 6px 0 rgba(4, 6, 12, 1),
+    0 12px 15px rgba(0, 0, 0, 0.5);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 }
@@ -1494,7 +1486,7 @@ footer div {
   left: -100%;
   width: 50%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
   transform: skewX(-20deg);
   transition: left 0.5s ease;
 }
@@ -1504,11 +1496,23 @@ footer div {
 }
 
 .social-3d-btn:hover {
-  background: rgba(120, 169, 255, 0.1);
-  border-color: rgba(120, 169, 255, 0.4);
-  transform: translateY(-8px) translateZ(20px) rotateX(10deg);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(120, 169, 255, 0.2);
+  background: linear-gradient(180deg, rgba(35, 48, 68, 0.9) 0%, rgba(20, 30, 52, 1) 100%);
+  border-color: rgba(120, 169, 255, 0.3);
+  transform: translateY(2px);
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.2), 
+    0 4px 0 rgba(4, 6, 12, 1), 
+    0 8px 10px rgba(0,0,0, 0.4);
   color: #fff;
+}
+
+.social-3d-btn:active {
+  transform: translateY(6px);
+  border-bottom-width: 1px;
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.05),
+    0 0 0 rgba(4, 6, 12, 1), 
+    0 2px 4px rgba(0,0,0, 0.3);
 }
 
 .social-icon {
