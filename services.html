@@ -41,9 +41,15 @@
     <!-- Page Hero Header -->
     <section class="page-hero">
       <div class="hero-decor" aria-hidden="true">
-        <svg class="decor-chart" viewBox="0 0 240 100" fill="none">
-          <path d="M10 75 Q 70 85, 120 45 T 230 20" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" />
-          <circle cx="230" cy="20" r="4" fill="var(--blue)" opacity="0.6" />
+        <svg class="s-curve-svg reveal" viewBox="0 0 400 120" fill="none" style="position: absolute; right: 5%; top: 25%; width: 400px; height: 120px; z-index: 0; opacity: 0.7; overflow: visible;">
+          <!-- Drop Shadow for the dot -->
+          <defs>
+            <filter id="dot-glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#8B9FFF" flood-opacity="0.5"/>
+            </filter>
+          </defs>
+          <path class="s-curve-line" d="M 0 90 C 150 90, 250 20, 390 20" stroke="#5B7FFF" stroke-width="2" stroke-linecap="round" />
+          <circle cx="390" cy="20" r="5" fill="#5B7FFF" class="s-curve-dot" filter="url(#dot-glow)" />
         </svg>
         <svg class="decor-icon float-1" style="right: 20%; top: 18%; width: 36px; height: 36px;" viewBox="0 0 24 24"
           fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
@@ -71,53 +77,25 @@
       <div class="service-list">
         <article class="reveal">
           <span>01</span>
-          <h3>Video Editing</h3>
-          <p>High-retention video content creation, short-form Reels/Shorts, and promo ad edits.</p>
-          <a href="https://wa.me/916382496454?text=Hi%20Munish,%20I'd%20like%20to%20enquire%20about%20Video%20Editing%20Services"
+          <h3>SEO (Search Engine Optimization)</h3>
+          <p>SEO content writing for websites, blogs, Answer Engine Optimization (AEO), and Generative Engine Optimization (GEO).</p>
+          <a href="https://wa.me/916382496454?text=Hi%20Munish,%20I'd%20like%20to%20enquire%20about%20SEO"
             target="_blank" rel="noopener" aria-label="Enquire via WhatsApp">↗</a>
         </article>
 
         <article class="reveal">
           <span>02</span>
-          <h3>Social Media Marketing</h3>
+          <h3>SMM (Social Media Marketing)</h3>
           <p>Social media content creation, multi-platform audience growth, and community engagement frameworks.</p>
-          <a href="https://wa.me/916382496454?text=Hi%20Munish,%20I'd%20like%20to%20enquire%20about%20Social%20Media%20Marketing"
+          <a href="https://wa.me/916382496454?text=Hi%20Munish,%20I'd%20like%20to%20enquire%20about%20SMM"
             target="_blank" rel="noopener" aria-label="Enquire via WhatsApp">↗</a>
         </article>
 
         <article class="reveal">
           <span>03</span>
-          <h3>SEO & Content Development</h3>
-          <p>SEO content writing for websites, blogs, Answer Engine Optimization (AEO), and Generative Engine
-            Optimization (GEO).</p>
-          <a href="https://wa.me/916382496454?text=Hi%20Munish,%20I'd%20like%20to%20enquire%20about%20SEO%20and%20Content%20Development"
-            target="_blank" rel="noopener" aria-label="Enquire via WhatsApp">↗</a>
-        </article>
-
-        <article class="reveal">
-          <span>04</span>
-          <h3>Project handling</h3>
-          <p>Proofreading, clear communication, campaign planning, training delivery, and mentoring interns and team
-            members.</p>
-          <a href="https://wa.me/916382496454?text=Hi%20Munish,%20I'd%20like%20to%20enquire%20about%20Project%20Handling%20and%20Training"
-            target="_blank" rel="noopener" aria-label="Enquire via WhatsApp">↗</a>
-        </article>
-
-        <article class="reveal">
-          <span>05</span>
-          <h3>AI assisted marketing & AI video generation</h3>
-          <p>Leveraging AI tools for accelerated content workflows, precise targeting, and generating high-retention
-            video marketing campaigns.</p>
-          <a href="https://wa.me/916382496454?text=Hi%20Munish,%20I'd%20like%20to%20enquire%20about%20AI%20Marketing%20and%20Video%20Generation"
-            target="_blank" rel="noopener" aria-label="Enquire via WhatsApp">↗</a>
-        </article>
-
-        <article class="reveal">
-          <span>06</span>
-          <h3>Automation & Optimization</h3>
-          <p>Implementing workflow automation, conducting technical SEO audits, and continuously refining digital
-            strategies for maximum efficiency.</p>
-          <a href="https://wa.me/916382496454?text=Hi%20Munish,%20I'd%20like%20to%20enquire%20about%20Automation%20and%20Optimization"
+          <h3>SEM (Search Engine Marketing)</h3>
+          <p>Targeted search engine advertising, PPC campaigns, and data-driven strategy to maximize your digital ROI.</p>
+          <a href="https://wa.me/916382496454?text=Hi%20Munish,%20I'd%20like%20to%20enquire%20about%20SEM"
             target="_blank" rel="noopener" aria-label="Enquire via WhatsApp">↗</a>
         </article>
       </div>

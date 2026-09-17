@@ -159,10 +159,65 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   }, { passive: true });
-  
+
+  window.initSkillCards = () => {
+    const skills = document.querySelectorAll('.skill');
+    
+    // Manage counter animation
+    const animateCounter = (el, target, duration = 1200) => {
+      let start = 0;
+      const startTime = performance.now();
+      
+      const updateCounter = (currentTime) => {
+        const elapsedTime = currentTime - startTime;
+        if (elapsedTime < duration) {
+          // Easing cubic-bezier(0.22, 1, 0.36, 1) approximation (easeOutQuint)
+          const t = elapsedTime / duration;
+          const progress = 1 - Math.pow(1 - t, 5);
+          const current = Math.floor(progress * target);
+          el.innerText = current + '%';
+          requestAnimationFrame(updateCounter);
+        } else {
+          el.innerText = target + '%';
+        }
+      };
+      
+      requestAnimationFrame(updateCounter);
+    };
+
+    skills.forEach(skill => {
+      skill.addEventListener('click', (e) => {
+        // Find if another card is expanded
+        const expandedCard = document.querySelector('.skill.is-expanded');
+        
+        if (skill.classList.contains('is-expanded')) {
+          // Collapse self
+          skill.classList.remove('is-expanded');
+          skill.style.removeProperty('--meter-target');
+        } else {
+          // Collapse other
+          if (expandedCard && expandedCard !== skill) {
+            expandedCard.classList.remove('is-expanded');
+            expandedCard.style.removeProperty('--meter-target');
+          }
+          
+          // Expand self
+          skill.classList.add('is-expanded');
+          const potential = skill.getAttribute('data-potential') || '0';
+          skill.style.setProperty('--meter-target', `${potential}%`);
+          
+          const valueEl = skill.querySelector('.meter-value');
+          if (valueEl) animateCounter(valueEl, parseInt(potential, 10));
+        }
+      });
+    });
+  };
+
   // Initial call on load
   window.initTimeline();
   window.initHeroAutoScroll();
+
+  window.initSkillCards();
 });
 
 // Page Transition & Nav Link click logic
@@ -237,14 +292,18 @@ document.querySelectorAll('nav a, header a.brand, footer a').forEach(link => {
       if (window.initHeroAutoScroll) {
         window.initHeroAutoScroll();
       }
+
+      if (window.initSkillCards) {
+        window.initSkillCards();
+      }
       
       initGlobe();
       
       if (href.includes('work.html') && window.loadWorkGrid) {
         window.loadWorkGrid();
       }
-      if (href.includes('experience.html') && window.loadExpGrid) {
-        window.loadExpGrid();
+      if (href.includes('experience.html') && window.initTimeline) {
+        window.initTimeline();
       }
       
       setTimeout(() => {
@@ -295,7 +354,7 @@ window.loadWorkGrid = async function() {
 window.loadExpGrid = async function() {
   const grid = document.getElementById('dynamic-exp-grid');
   if(!grid) return;
-  const { data, error } = await supabase.from('experience_items').select('*').order('order', { ascending: true });
+  const { data, error } = await supabase.from('experience_items').select('*').order('order', { ascending: false });
   if (error) { grid.innerHTML += '<p style="color:red">Error loading experience items.</p>'; return; }
   
   // Clear any placeholder/existing content except the track
@@ -328,7 +387,6 @@ window.loadExpGrid = async function() {
 
 function initDataLoad() {
   if (window.location.pathname.includes('work.html')) window.loadWorkGrid();
-  if (window.location.pathname.includes('experience.html')) window.loadExpGrid();
 }
 
 if (document.readyState === 'loading') {

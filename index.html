@@ -46,27 +46,26 @@
       <div class="orb orb-1"></div>
       <div class="orb orb-2"></div>
       <div class="hero-copy reveal" style="position: relative; z-index: 2;">
-        <canvas id="hero-globe" style="position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); width: 70%; max-width: 520px; aspect-ratio: 1; opacity: 0.45; z-index: -1; pointer-events: none;" aria-hidden="true"></canvas>
-        <p class="eyebrow" style="position: relative; z-index: 1;"><span></span> AI powered Digital Marketing</p>
+        <div class="hero-text-bg" style="position: absolute; inset: -40px -20px -20px -40px; background: radial-gradient(circle at left center, rgba(8, 11, 18, 0.85) 0%, rgba(8, 11, 18, 0.4) 50%, transparent 100%); z-index: -1; pointer-events: none; border-radius: 50%;"></div>
+        <div class="globe-orbit-wrapper" style="position: absolute; top: 50%; left: 45%; transform: translate(-50%, -50%); width: 85%; max-width: 550px; aspect-ratio: 1; z-index: -2;">
+          <canvas id="hero-globe" style="width: 100%; height: 100%; opacity: 0.60; pointer-events: none;" aria-hidden="true"></canvas>
+        </div>
+        <p class="eyebrow" style="position: relative; z-index: 1;"><span></span> AI powered Digital Marketing Professional</p>
         <h1 style="margin-left: -4px; position: relative; z-index: 1;">Munish Prabhu K</h1>
-        <p class="lede" style="position: relative; z-index: 1;">Creative and detail-oriented Digital Marketing Executive from Coimbatore, Tamil Nadu. Skilled in SEO content writing, Meta Ads, social media marketing, and website audits.</p>
+        <p class="lede" style="position: relative; z-index: 1;">A Creative of well skilled Digital Marketing Professional Handled various services like SEO, SMM, SMO, SEM with the power of AI.</p>
         <div class="actions" style="position: relative; z-index: 1;">
           <a class="button" href="work.html">View my work</a>
           <a class="text-link" href="#contact">Let's work together <b>↗</b></a>
         </div>
       </div>
       <div class="portrait reveal" style="position: relative;">
-        <!-- Globe Canvas moved to about section -->
+        <!-- Globe Canvas wrapper is now in hero-copy -->
         <div class="portrait-dot dot-1"></div>
         <div class="portrait-dot dot-2"></div>
         <div class="portrait-dot dot-3"></div>
         <div class="portrait-ring"></div>
         <div class="portrait-placeholder">
           <img src="munesh_profile.jpg" alt="Munish Prabhu K Profile Photo" class="portrait-img" />
-        </div>
-        <div class="portrait-note">
-          <span>01</span>
-          <p>Digital Marketing Executive<br>BiTS Informatics, Coimbatore</p>
         </div>
       </div>
     </section>
@@ -78,28 +77,8 @@
       <div class="intro-main">
         <h2 class="reveal">The strategy behind <em>meaningful</em> momentum.</h2>
         <div class="intro-copy reveal">
-          <p>I'm <strong>Munish Prabhu K</strong>, a creative and detail-oriented Digital Marketing Professional based in Coimbatore, Tamil Nadu, with hands-on experience in SEO content writing, social media content creation, and digital marketing strategies.</p>
-          <p class="muted">Skilled in creating engaging content for websites, blogs, and social media platforms while applying SEO best practices to improve online visibility and engagement. Strong research, proofreading, and communication abilities with a passion for content development and brand storytelling.</p>
-          <p class="muted">Certified in <strong>Digital Marketing & Business Analytics (KGiSL MicroCollege)</strong> and <strong>AI Tools & ChatGPT (Be10X Academy)</strong>. Experienced in Google Analytics, Search Console, Meta Ads Manager, and SEO auditing tools.</p>
+          <p>I am <strong>Munish Prabhu K</strong>, a certified Digital Marketing Professional with a strong interest in building meaningfull connections between brands and their audiences through Strategical content of well planned digital strategies. My experience includes SEO, SMM, SMO, SEM and performance tracking using Google Analytics and Google search console.</p>
           <a href="experience.html" class="text-link">View my experience timeline <b>↗</b></a>
-        </div>
-      </div>
-      <div class="facts reveal">
-        <div>
-          <span>B.Com</span>
-          <small>Commerce Degree</small>
-        </div>
-        <div>
-          <span>SEO & Ads</span>
-          <small>Core Specialization</small>
-        </div>
-        <div>
-          <span>KGiSL</span>
-          <small>Digital Analytics</small>
-        </div>
-        <div>
-          <span>Be10X</span>
-          <small>AI Tools Certified</small>
         </div>
       </div>
       </div>
@@ -114,7 +93,10 @@
         <div>
           <h2 class="reveal">Have a project<br>in <em>mind?</em></h2>
           <p class="muted reveal">Let's discuss how SEO strategies, Meta Ads, content marketing, and AI tools can elevate your brand's digital presence.</p>
-          <p style="margin-top: 15px; font-weight: 600; color: var(--blue);">📍 Coimbatore, Tamil Nadu, India</p>
+          <p style="margin-top: 15px; font-weight: 600; color: var(--blue); display: flex; align-items: center; gap: 8px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            Coimbatore, Tamil Nadu, India
+          </p>
         </div>
 
         <div class="contact-channels reveal">
@@ -134,13 +116,33 @@
             <div class="channel-icon">💬</div>
           </a>
 
-          <div class="social-links-wrap">
+          <div class="social-links-wrap" style="width: 100%;">
             <h4>Connect via Socials</h4>
-            <div class="social-pills">
-              <a href="#" class="social-pill">LinkedIn ↗</a>
-              <a href="#" class="social-pill">Twitter / X ↗</a>
-              <a href="#" class="social-pill">Instagram ↗</a>
-              <a href="#" class="social-pill">YouTube ↗</a>
+            <div class="social-3d-grid">
+              <a href="#" class="social-3d-btn" target="_blank" rel="noopener noreferrer" aria-label="Connect with Munish Prabhu K on LinkedIn">
+                <span class="social-icon">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                </span>
+                <span class="social-name">LinkedIn</span>
+              </a>
+              <a href="#" class="social-3d-btn" target="_blank" rel="noopener noreferrer" aria-label="Connect with Munish Prabhu K on Twitter / X">
+                <span class="social-icon">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
+                </span>
+                <span class="social-name">X</span>
+              </a>
+              <a href="#" class="social-3d-btn" target="_blank" rel="noopener noreferrer" aria-label="Connect with Munish Prabhu K on Instagram">
+                <span class="social-icon">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                </span>
+                <span class="social-name">Instagram</span>
+              </a>
+              <a href="#" class="social-3d-btn" target="_blank" rel="noopener noreferrer" aria-label="Connect with Munish Prabhu K on YouTube">
+                <span class="social-icon">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.501 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.55 9.377.55 9.377.55s7.505 0 9.377-.55a3.016 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </span>
+                <span class="social-name">YouTube</span>
+              </a>
             </div>
           </div>
         </div>
