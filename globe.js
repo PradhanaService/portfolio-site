@@ -1,4 +1,5 @@
 import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+import earthMaskUrl from './earth-mask.png';
 
 let animationId = null;
 
@@ -46,7 +47,7 @@ export function initGlobe() {
   // 1. Load Earth Mask and generate continents
   const img = new Image();
   img.crossOrigin = "Anonymous";
-  img.src = "earth-mask.png";
+  img.src = earthMaskUrl;
   img.onload = () => {
     const imgCanvas = document.createElement('canvas');
     imgCanvas.width = img.width;
