@@ -2640,9 +2640,7 @@ footer div {
   cursor: pointer;
 }
 
-body.project-detail-page .floating-work-btn {
-  display: inline-flex !important;
-}
+/* floating-work-btn removed - inline project-view-work button used instead */
 
 .floating-work-btn b {
   font-family: system-ui, sans-serif;
