@@ -141,6 +141,31 @@
     @media (max-width: 620px) {
       .repeatable-row, .repeatable-row.outcome-row { grid-template-columns: 1fr; }
     }
+    .desc-toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .desc-toolbar-btn {
+      padding: 5px 12px;
+      background: #1a2333;
+      border: 1px solid rgba(120, 169, 255, 0.3);
+      border-radius: 6px;
+      color: var(--blue);
+      font: 500 12px 'DM Mono', monospace;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .desc-toolbar-btn:hover {
+      background: rgba(120, 169, 255, 0.15);
+      border-color: var(--blue);
+    }
+    .desc-toolbar-label {
+      font: 500 11px 'DM Mono', monospace;
+      color: var(--muted);
+      align-self: center;
+    }
   </style>
 </head>
 <body>
@@ -257,7 +282,13 @@
         </div>
         <div class="form-group">
           <label>Description</label>
-          <textarea id="exp-desc" required></textarea>
+          <div class="desc-toolbar">
+            <span class="desc-toolbar-label">Bullet points:</span>
+            <button type="button" class="desc-toolbar-btn" onclick="insertBullet('exp-desc')">• Insert bullet</button>
+            <button type="button" class="desc-toolbar-btn" onclick="formatAsBullets('exp-desc')">Format all as bullets</button>
+            <button type="button" class="desc-toolbar-btn" onclick="clearBullets('exp-desc')">Clear bullets</button>
+          </div>
+          <textarea id="exp-desc" required style="min-height: 140px;"></textarea>
         </div>
         <button type="submit" class="button">Save Experience</button>
         <button type="button" class="btn-small" onclick="resetExpForm()" style="margin-left: 10px;">Cancel Edit</button>
@@ -469,6 +500,8 @@
         document.getElementById('work-review-url').value = item.review_url || '';
         renderRepeatableRows('work-process-steps', 'process', Array.isArray(item.process_steps) ? item.process_steps : []);
         renderRepeatableRows('work-outcomes', 'outcome', Array.isArray(item.outcomes) ? item.outcomes : []);
+        // Scroll to form smoothly
+        document.getElementById('work-form').closest('.form-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
       };
 
       window.resetWorkForm = () => {
@@ -494,6 +527,8 @@
         document.getElementById('exp-date').value = item.date_range;
         document.getElementById('exp-title').value = item.title;
         document.getElementById('exp-desc').value = item.description;
+        // Scroll to form smoothly
+        document.getElementById('exp-form').closest('.form-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
       };
 
       window.resetExpForm = () => {
@@ -510,6 +545,47 @@
         }
       };
     });
+
+    // Bullet point toolbar helpers (global scope)
+    window.insertBullet = (textareaId) => {
+      const ta = document.getElementById(textareaId);
+      const start = ta.selectionStart;
+      const end = ta.selectionEnd;
+      const value = ta.value;
+      // Insert '• ' at cursor; if at start of a line, just prepend
+      const before = value.substring(0, start);
+      const after = value.substring(end);
+      const needsNewline = before.length > 0 && !before.endsWith('\n');
+      const insert = (needsNewline ? '\n' : '') + '\u2022 ';
+      ta.value = before + insert + after;
+      const newPos = start + insert.length;
+      ta.setSelectionRange(newPos, newPos);
+      ta.focus();
+    };
+
+    window.formatAsBullets = (textareaId) => {
+      const ta = document.getElementById(textareaId);
+      const lines = ta.value.split('\n');
+      ta.value = lines
+        .map(line => line.trim())
+        .filter(line => line.length > 0)
+        .map(line => {
+          // Remove existing bullet symbols and dashes before re-adding
+          const cleaned = line.replace(/^[•\-\*]\s*/, '').trim();
+          return '\u2022 ' + cleaned;
+        })
+        .join('\n');
+      ta.focus();
+    };
+
+    window.clearBullets = (textareaId) => {
+      const ta = document.getElementById(textareaId);
+      const lines = ta.value.split('\n');
+      ta.value = lines
+        .map(line => line.replace(/^[•\-\*]\s*/, '').trim())
+        .join('\n');
+      ta.focus();
+    };
   </script>
 </body>
 </html>
