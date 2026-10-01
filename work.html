@@ -12,6 +12,28 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="responsive.css" />
+  <style>
+    /* Work Hero Folder Animation — scoped to .wf-* */
+    .wf-anim{position:absolute;right:42%;top:6%;display:flex;flex-direction:column;align-items:center;gap:12px;pointer-events:none;z-index:2;}
+    .wf-folder-wrap{position:relative;animation:wfFolderIn 0.55s cubic-bezier(.22,1,.36,1) 0.4s both;}
+    @keyframes wfFolderIn{from{opacity:0;transform:scale(.6) translateY(14px)}to{opacity:1;transform:scale(1) translateY(0)}}
+    .wf-folder-svg{display:block;animation:wfClick 0.3s ease 1.1s both;filter:drop-shadow(0 0 6px rgba(120,169,255,.25));}
+    @keyframes wfClick{0%{transform:scale(1)}40%{transform:scale(.88);filter:drop-shadow(0 0 12px rgba(120,169,255,.7))}100%{transform:scale(1);filter:drop-shadow(0 0 16px rgba(120,169,255,.55))}}
+    .wf-lid{transform-origin:50% 0%;transform-box:fill-box;animation:wfLidOpen 0.45s cubic-bezier(.22,1,.36,1) 1.35s both;}
+    @keyframes wfLidOpen{from{transform:rotateX(0deg);opacity:1}to{transform:rotateX(-55deg);opacity:.45}}
+    .wf-files{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .wf-file{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;opacity:0;animation:wfFileIn 0.38s cubic-bezier(.22,1,.36,1) both;}
+    .wf-file:nth-child(1){animation-delay:1.75s}.wf-file:nth-child(2){animation-delay:2.05s}.wf-file:nth-child(3){animation-delay:2.35s}.wf-file:nth-child(4){animation-delay:2.65s}
+    @keyframes wfFileIn{from{opacity:0;transform:translateY(-10px) scale(.8)}to{opacity:1;transform:translateY(0) scale(1)}}
+    .wf-tick{position:absolute;top:-7px;right:-7px;opacity:0;animation:wfTickPop 0.32s cubic-bezier(.34,1.56,.64,1) both;}
+    .wf-file:nth-child(1) .wf-tick{animation-delay:2.0s}.wf-file:nth-child(2) .wf-tick{animation-delay:2.3s}.wf-file:nth-child(3) .wf-tick{animation-delay:2.6s}.wf-file:nth-child(4) .wf-tick{animation-delay:2.9s}
+    @keyframes wfTickPop{from{opacity:0;transform:scale(0) rotate(-20deg)}to{opacity:1;transform:scale(1) rotate(0deg)}}
+    .wf-tick-path{stroke-dasharray:18;stroke-dashoffset:18;animation:wfDraw 0.3s ease forwards;}
+    .wf-file:nth-child(1) .wf-tick-path{animation-delay:2.08s}.wf-file:nth-child(2) .wf-tick-path{animation-delay:2.38s}.wf-file:nth-child(3) .wf-tick-path{animation-delay:2.68s}.wf-file:nth-child(4) .wf-tick-path{animation-delay:2.98s}
+    @keyframes wfDraw{to{stroke-dashoffset:0}}
+    .wf-label{font:600 8px 'DM Mono',monospace;color:rgba(120,169,255,.75);letter-spacing:.05em;text-transform:uppercase;}
+    @media(max-width:768px){.wf-anim{display:none}}
+  </style>
 </head>
 <body>
   <div class="progress" aria-hidden="true"></div>
@@ -50,6 +72,101 @@
         <span class="decor-pill violet float-2" style="right: 11%; top: 22%;">+SEO impact</span>
         <span class="decor-pill float-1" style="right: 28%; top: 60%;">Client results</span>
         <span class="decor-pill violet float-3" style="right: 6%; top: 68%;">Meta Ads</span>
+
+        <!-- Folder + Files Animation -->
+        <div class="wf-anim" aria-hidden="true">
+          <!-- Folder -->
+          <div class="wf-folder-wrap">
+            <svg class="wf-folder-svg" viewBox="0 0 72 52" width="72" height="52" xmlns="http://www.w3.org/2000/svg">
+              <!-- Folder back body -->
+              <rect x="2" y="16" width="68" height="34" rx="4" fill="rgba(18,42,90,.45)" stroke="rgba(120,169,255,.55)" stroke-width="1.5"/>
+              <!-- Folder tab -->
+              <path d="M2 16 L2 11 Q2 9 4 9 L26 9 Q28 9 29.5 11 L32 16 Z" fill="rgba(30,60,130,.5)" stroke="rgba(120,169,255,.55)" stroke-width="1.5"/>
+              <!-- Interior line hints -->
+              <line x1="10" y1="27" x2="62" y2="27" stroke="rgba(120,169,255,.18)" stroke-width="1"/>
+              <line x1="10" y1="33" x2="52" y2="33" stroke="rgba(120,169,255,.13)" stroke-width="1"/>
+              <line x1="10" y1="39" x2="58" y2="39" stroke="rgba(120,169,255,.13)" stroke-width="1"/>
+              <!-- Folder lid (animates open on click) -->
+              <rect class="wf-lid" x="2" y="16" width="68" height="9" rx="3" fill="rgba(60,110,220,.22)" stroke="rgba(120,169,255,.7)" stroke-width="1.5"/>
+            </svg>
+          </div>
+
+          <!-- 4 File Cards in 2×2 grid -->
+          <div class="wf-files">
+            <!-- File 1 -->
+            <div class="wf-file">
+              <svg viewBox="0 0 38 46" width="38" height="46">
+                <path d="M4 2 L26 2 L34 10 L34 44 L4 44 Z" fill="rgba(12,28,65,.75)" stroke="rgba(120,169,255,.5)" stroke-width="1.5"/>
+                <path d="M26 2 L26 10 L34 10" fill="none" stroke="rgba(120,169,255,.5)" stroke-width="1.5"/>
+                <line x1="9" y1="18" x2="29" y2="18" stroke="rgba(120,169,255,.28)" stroke-width="1"/>
+                <line x1="9" y1="23" x2="23" y2="23" stroke="rgba(120,169,255,.2)" stroke-width="1"/>
+                <line x1="9" y1="28" x2="27" y2="28" stroke="rgba(120,169,255,.2)" stroke-width="1"/>
+              </svg>
+              <div class="wf-tick">
+                <svg viewBox="0 0 20 20" width="20" height="20">
+                  <circle cx="10" cy="10" r="9" fill="#071530" stroke="rgba(120,169,255,.9)" stroke-width="1.5"/>
+                  <path class="wf-tick-path" d="M5.5 10 L9 13.5 L14.5 6.5" fill="none" stroke="#78a9ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="wf-label">SEO</span>
+            </div>
+
+            <!-- File 2 -->
+            <div class="wf-file">
+              <svg viewBox="0 0 38 46" width="38" height="46">
+                <path d="M4 2 L26 2 L34 10 L34 44 L4 44 Z" fill="rgba(12,28,65,.75)" stroke="rgba(120,169,255,.5)" stroke-width="1.5"/>
+                <path d="M26 2 L26 10 L34 10" fill="none" stroke="rgba(120,169,255,.5)" stroke-width="1.5"/>
+                <line x1="9" y1="18" x2="29" y2="18" stroke="rgba(120,169,255,.28)" stroke-width="1"/>
+                <line x1="9" y1="23" x2="23" y2="23" stroke="rgba(120,169,255,.2)" stroke-width="1"/>
+                <line x1="9" y1="28" x2="27" y2="28" stroke="rgba(120,169,255,.2)" stroke-width="1"/>
+              </svg>
+              <div class="wf-tick">
+                <svg viewBox="0 0 20 20" width="20" height="20">
+                  <circle cx="10" cy="10" r="9" fill="#071530" stroke="rgba(120,169,255,.9)" stroke-width="1.5"/>
+                  <path class="wf-tick-path" d="M5.5 10 L9 13.5 L14.5 6.5" fill="none" stroke="#78a9ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="wf-label">Meta Ads</span>
+            </div>
+
+            <!-- File 3 -->
+            <div class="wf-file">
+              <svg viewBox="0 0 38 46" width="38" height="46">
+                <path d="M4 2 L26 2 L34 10 L34 44 L4 44 Z" fill="rgba(12,28,65,.75)" stroke="rgba(120,169,255,.5)" stroke-width="1.5"/>
+                <path d="M26 2 L26 10 L34 10" fill="none" stroke="rgba(120,169,255,.5)" stroke-width="1.5"/>
+                <line x1="9" y1="18" x2="29" y2="18" stroke="rgba(120,169,255,.28)" stroke-width="1"/>
+                <line x1="9" y1="23" x2="23" y2="23" stroke="rgba(120,169,255,.2)" stroke-width="1"/>
+                <line x1="9" y1="28" x2="27" y2="28" stroke="rgba(120,169,255,.2)" stroke-width="1"/>
+              </svg>
+              <div class="wf-tick">
+                <svg viewBox="0 0 20 20" width="20" height="20">
+                  <circle cx="10" cy="10" r="9" fill="#071530" stroke="rgba(120,169,255,.9)" stroke-width="1.5"/>
+                  <path class="wf-tick-path" d="M5.5 10 L9 13.5 L14.5 6.5" fill="none" stroke="#78a9ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="wf-label">SMM</span>
+            </div>
+
+            <!-- File 4 -->
+            <div class="wf-file">
+              <svg viewBox="0 0 38 46" width="38" height="46">
+                <path d="M4 2 L26 2 L34 10 L34 44 L4 44 Z" fill="rgba(12,28,65,.75)" stroke="rgba(120,169,255,.5)" stroke-width="1.5"/>
+                <path d="M26 2 L26 10 L34 10" fill="none" stroke="rgba(120,169,255,.5)" stroke-width="1.5"/>
+                <line x1="9" y1="18" x2="29" y2="18" stroke="rgba(120,169,255,.28)" stroke-width="1"/>
+                <line x1="9" y1="23" x2="23" y2="23" stroke="rgba(120,169,255,.2)" stroke-width="1"/>
+                <line x1="9" y1="28" x2="27" y2="28" stroke="rgba(120,169,255,.2)" stroke-width="1"/>
+              </svg>
+              <div class="wf-tick">
+                <svg viewBox="0 0 20 20" width="20" height="20">
+                  <circle cx="10" cy="10" r="9" fill="#071530" stroke="rgba(120,169,255,.9)" stroke-width="1.5"/>
+                  <path class="wf-tick-path" d="M5.5 10 L9 13.5 L14.5 6.5" fill="none" stroke="#78a9ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="wf-label">Analytics</span>
+            </div>
+          </div>
+        </div>
+        <!-- End Folder Animation -->
       </div>
       <p class="eyebrow">04 / Featured Projects</p>
       <h1>Campaigns and Projects <em>That Delivered Measurable Results</em></h1>
