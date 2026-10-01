@@ -121,6 +121,26 @@
       resize: vertical;
       min-height: 80px;
     }
+    .repeatable-editor {
+      display: grid;
+      gap: 10px;
+    }
+    .repeatable-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+      gap: 9px;
+      align-items: start;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #101520;
+    }
+    .repeatable-row.outcome-row { grid-template-columns: 92px 1fr 1fr auto; }
+    .repeatable-row textarea { min-height: 42px; }
+    .repeatable-add { margin-top: 10px; }
+    @media (max-width: 620px) {
+      .repeatable-row, .repeatable-row.outcome-row { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -158,6 +178,44 @@
         <div class="form-group">
           <label>Description</label>
           <textarea id="work-desc" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Client name (shown on project detail)</label>
+          <input type="text" id="work-client" />
+        </div>
+        <div class="form-group">
+          <label>Project overview (optional; falls back to Description)</label>
+          <textarea id="work-overview"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Duration (optional)</label>
+          <input type="text" id="work-duration" placeholder="e.g. 4 weeks" />
+        </div>
+        <div class="form-group">
+          <label>Live site URL (optional)</label>
+          <input type="url" id="work-live-url" placeholder="https://example.com" />
+        </div>
+        <div class="form-group">
+          <label>Review portal URL (optional)</label>
+          <input type="url" id="work-review-url" placeholder="https://example.com/review" />
+        </div>
+        <div class="form-group">
+          <label>Challenge</label>
+          <textarea id="work-challenge" placeholder="Describe the challenge this project needed to solve."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Our Approach</label>
+          <textarea id="work-approach" placeholder="Describe the approach taken for this project."></textarea>
+        </div>
+        <div class="form-group">
+          <label>How we got there — process steps</label>
+          <div id="work-process-steps" class="repeatable-editor"></div>
+          <button type="button" id="add-process-step" class="btn-small repeatable-add">+ Add process step</button>
+        </div>
+        <div class="form-group">
+          <label>Project outcomes</label>
+          <div id="work-outcomes" class="repeatable-editor"></div>
+          <button type="button" id="add-outcome" class="btn-small repeatable-add">+ Add outcome</button>
         </div>
         <div class="form-group">
           <label><input type="checkbox" id="work-large" /> Is Large Featured Card?</label>
@@ -232,6 +290,56 @@
         });
       });
 
+      function addRepeatableRow(containerId, type, value = {}) {
+        const container = document.getElementById(containerId);
+        const row = document.createElement('div');
+        row.className = `repeatable-row ${type === 'outcome' ? 'outcome-row' : ''}`;
+        const fields = type === 'outcome'
+          ? [
+              ['icon_label', 'Token (e.g. MU)', value.icon_label || ''],
+              ['value', 'Value (e.g. 3.2x)', value.value || ''],
+              ['description', 'Description', value.description || '']
+            ]
+          : [
+              ['title', 'Step title', value.title || ''],
+              ['description', 'Short description', value.description || '']
+            ];
+
+        fields.forEach(([name, placeholder, fieldValue]) => {
+          const input = name === 'description' ? document.createElement('textarea') : document.createElement('input');
+          input.dataset.field = name;
+          input.placeholder = placeholder;
+          input.value = fieldValue;
+          row.appendChild(input);
+        });
+
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'btn-small danger';
+        remove.textContent = 'Remove';
+        remove.addEventListener('click', () => row.remove());
+        row.appendChild(remove);
+        container.appendChild(row);
+      }
+
+      function renderRepeatableRows(containerId, type, values = []) {
+        document.getElementById(containerId).replaceChildren();
+        values.forEach(value => addRepeatableRow(containerId, type, value));
+      }
+
+      function collectRepeatableRows(containerId, requiredFields, label) {
+        return [...document.querySelectorAll(`#${containerId} .repeatable-row`)].reduce((items, row) => {
+          const item = Object.fromEntries(requiredFields.map(field => [field, row.querySelector(`[data-field="${field}"]`).value.trim()]));
+          if (!requiredFields.some(field => item[field])) return items;
+          if (requiredFields.some(field => !item[field])) throw new Error(`${label} rows need every field completed or removed.`);
+          items.push(item);
+          return items;
+        }, []);
+      }
+
+      document.getElementById('add-process-step').addEventListener('click', () => addRepeatableRow('work-process-steps', 'process'));
+      document.getElementById('add-outcome').addEventListener('click', () => addRepeatableRow('work-outcomes', 'outcome'));
+
       // Fetch and Render Work
       async function loadWork() {
         const { data, error } = await supabase.from('work_items').select('*').order('order', { ascending: true });
@@ -281,6 +389,15 @@
       document.getElementById('work-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const id = document.getElementById('work-id').value;
+        let processSteps;
+        let outcomes;
+        try {
+          processSteps = collectRepeatableRows('work-process-steps', ['title', 'description'], 'Process step');
+          outcomes = collectRepeatableRows('work-outcomes', ['icon_label', 'value', 'description'], 'Outcome');
+        } catch (error) {
+          alert(error.message);
+          return;
+        }
         const payload = {
           order: parseInt(document.getElementById('work-order').value),
           tag_line: document.getElementById('work-tag').value,
@@ -289,6 +406,15 @@
           is_large: document.getElementById('work-large').checked,
           link_url: document.getElementById('work-link-url').value,
           link_label: document.getElementById('work-link-label').value,
+          client_name: document.getElementById('work-client').value,
+          overview: document.getElementById('work-overview').value,
+          challenge_text: document.getElementById('work-challenge').value,
+          approach_text: document.getElementById('work-approach').value,
+          duration: document.getElementById('work-duration').value,
+          live_site_url: document.getElementById('work-live-url').value,
+          review_url: document.getElementById('work-review-url').value,
+          process_steps: processSteps,
+          outcomes,
         };
         
         if (id) {
@@ -334,12 +460,23 @@
         document.getElementById('work-large').checked = item.is_large;
         document.getElementById('work-link-url').value = item.link_url || '';
         document.getElementById('work-link-label').value = item.link_label || '';
+        document.getElementById('work-client').value = item.client_name || item.client || '';
+        document.getElementById('work-overview').value = item.overview || item.overview_text || '';
+        document.getElementById('work-challenge').value = item.challenge_text || '';
+        document.getElementById('work-approach').value = item.approach_text || '';
+        document.getElementById('work-duration').value = item.duration || '';
+        document.getElementById('work-live-url').value = item.live_site_url || '';
+        document.getElementById('work-review-url').value = item.review_url || '';
+        renderRepeatableRows('work-process-steps', 'process', Array.isArray(item.process_steps) ? item.process_steps : []);
+        renderRepeatableRows('work-outcomes', 'outcome', Array.isArray(item.outcomes) ? item.outcomes : []);
       };
 
       window.resetWorkForm = () => {
         document.getElementById('work-form-title').innerText = 'Add New Work';
         document.getElementById('work-form').reset();
         document.getElementById('work-id').value = '';
+        renderRepeatableRows('work-process-steps', 'process');
+        renderRepeatableRows('work-outcomes', 'outcome');
       };
 
       window.deleteWork = async (id) => {

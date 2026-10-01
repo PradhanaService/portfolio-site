@@ -42,20 +42,24 @@
     <section class="page-hero">
       <div class="hero-decor" aria-hidden="true">
         <div class="orb orb-1"></div>
-        <svg class="desktop-graph reveal" viewBox="0 -20 650 320" style="position: absolute; right: 2%; top: 50%; transform: translateY(-50%); width: 550px; height: auto; z-index: 0; pointer-events: none;">
+        <svg class="desktop-graph reveal" viewBox="0 -20 650 320"
+          style="position: absolute; right: 3%; top: 50%; transform: translateY(-50%); width: clamp(360px, 38vw, 490px); height: auto; z-index: 0; pointer-events: none;">
           <style>
             .anim-draw {
               clip-path: inset(0 100% -20px 0);
               transition: clip-path 2s cubic-bezier(0.22, 1, 0.36, 1) 0.3s;
             }
+
             svg.visible .anim-draw {
               clip-path: inset(0 -20px -20px 0);
             }
+
             .anim-tooltip {
               opacity: 0;
               transform: translateY(10px);
               transition: opacity 0.6s ease 2s, transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 2s;
             }
+
             svg.visible .anim-tooltip {
               opacity: 1;
               transform: translateY(0);
@@ -63,16 +67,20 @@
           </style>
           <defs>
             <linearGradient id="chartGlow" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="var(--blue)" stop-opacity="0.3"/>
-              <stop offset="100%" stop-color="var(--blue)" stop-opacity="0"/>
+              <stop offset="0%" stop-color="var(--blue)" stop-opacity="0.3" />
+              <stop offset="100%" stop-color="var(--blue)" stop-opacity="0" />
             </linearGradient>
           </defs>
 
           <!-- Text block on the left -->
-          <text x="0" y="40" fill="#f1f5f9" font-family="'Manrope', sans-serif" font-weight="600" font-size="18">Business Growth</text>
-          <text x="0" y="100" fill="var(--blue)" font-family="'Manrope', sans-serif" font-weight="800" font-size="52">+180%</text>
-          <text x="0" y="140" fill="#94a3b8" font-family="'Manrope', sans-serif" font-weight="500" font-size="15">Revenue increase</text>
-          <text x="0" y="162" fill="#94a3b8" font-family="'Manrope', sans-serif" font-weight="500" font-size="15">in 12 months</text>
+          <text x="0" y="40" fill="#f1f5f9" font-family="'Manrope', sans-serif" font-weight="600"
+            font-size="18">Business Growth</text>
+          <text x="0" y="100" fill="var(--blue)" font-family="'Manrope', sans-serif" font-weight="800"
+            font-size="52">+180%</text>
+          <text x="0" y="140" fill="#94a3b8" font-family="'Manrope', sans-serif" font-weight="500"
+            font-size="15">Revenue increase</text>
+          <text x="0" y="162" fill="#94a3b8" font-family="'Manrope', sans-serif" font-weight="500" font-size="15">in 12
+            months</text>
 
           <!-- Grid Lines (Horizontal) -->
           <g stroke="#1e293b" stroke-width="1">
@@ -126,10 +134,14 @@
 
           <g class="anim-draw">
             <!-- Gradient Area -->
-            <polygon points="220,230 253,220 286,205 319,190 352,180 385,160 418,145 451,140 484,115 517,80 550,55 583,40 583,240 220,240" fill="url(#chartGlow)" />
+            <polygon
+              points="220,230 253,220 286,205 319,190 352,180 385,160 418,145 451,140 484,115 517,80 550,55 583,40 583,240 220,240"
+              fill="url(#chartGlow)" />
 
             <!-- Line Graph -->
-            <polyline points="220,230 253,220 286,205 319,190 352,180 385,160 418,145 451,140 484,115 517,80 550,55 583,40" fill="none" stroke="var(--blue)" stroke-width="3" stroke-linejoin="round" />
+            <polyline
+              points="220,230 253,220 286,205 319,190 352,180 385,160 418,145 451,140 484,115 517,80 550,55 583,40"
+              fill="none" stroke="var(--blue)" stroke-width="3" stroke-linejoin="round" />
 
             <!-- Data Dots -->
             <g fill="#080b12" stroke="var(--blue)" stroke-width="3">
@@ -155,12 +167,13 @@
           <g class="anim-tooltip" transform="translate(583, 10)">
             <rect x="-25" y="-15" width="50" height="24" rx="4" fill="var(--blue)" />
             <polygon points="-5,9 5,9 0,14" fill="var(--blue)" />
-            <text x="0" y="2" fill="#fff" font-family="'Manrope', sans-serif" font-weight="700" font-size="12" text-anchor="middle">200K</text>
+            <text x="0" y="2" fill="#fff" font-family="'Manrope', sans-serif" font-weight="700" font-size="12"
+              text-anchor="middle">200K</text>
           </g>
         </svg>
       </div>
       <p class="eyebrow">02 / Expertise & Capabilities</p>
-      <h1>A connected view of <em>modern marketing.</em></h1>
+      <h1>Years of Crafting Strategies <em>That Drive Real Engagement and Growth</em></h1>
       <p class="lede">Combining SEO content writing, social media marketing, website audits, video editing, Meta Ads,
         and team training delivery.</p>
     </section>
@@ -169,139 +182,200 @@
     <section class="expertise section">
       <div class="skill-grid">
         <!-- Card 1: Video Editing -->
-        <article class="skill featured glow-card reveal" data-potential="88">
-          <span>01</span>
-          <h3>Video<br>Editing</h3>
-          <p>High-retention video content creation, short-form Reels/Shorts, and promo ad edits.</p>
-          <div class="software-badges">
-            <span class="software-tag">Premiere Pro</span>
-            <span class="software-tag">DaVinci Resolve</span>
-            <span class="software-tag">CapCut</span>
-          </div>
-          <div class="capability-meter-wrap">
-            <div class="meter-header">
-              <span>Capability Strength</span>
-              <span class="meter-value">0%</span>
+        <article class="skill featured glow-card reveal video-editing-skill" data-potential="88">
+          <div class="skill-detail-panel">
+            <span>01</span>
+            <h3>Video<br>Editing</h3>
+            <h4 class="detail-heading">Scaling Brands with AI-Enhanced Digital Marketing</h4>
+            <p class="detail-highlight"><strong>Highlight:</strong> Turn dull, ordinary videos into films that keep your
+              audience on the edge of their seats.</p>
+            <div class="skill-details">
+              <p>I have over a decade of professional video editing experience, specializing in social media platforms
+                and videos for other platforms (i.e. YouTube). I have extensive experience with various editing styles
+                and techniques, including conventional and advanced level video transitions.</p>
+              <p>I can provide services in all facets of video editing, ranging from simple cutting and arranging of
+                video clips to color correction and audio balancing. I can create basic motion graphics. I can edit
+                videos of all lengths; from extremely short videos (i.e. social media Reels) to very long videos (i.e.
+                documentary films).</p>
+              <p>In all my work, I make it a goal to utilize videos and graphics in a way that reinforces the viewer's
+                perception that the video was created by the brand and/or organization rather than by an external
+                entity.</p>
             </div>
-            <div class="meter-track">
-              <div class="meter-fill"></div>
+            <div class="software-badges">
+              <span class="software-tag">Premiere Pro</span>
+              <span class="software-tag">DaVinci Resolve</span>
+              <span class="software-tag">CapCut</span>
             </div>
+            <div class="capability-meter-wrap">
+              <div class="meter-header">
+                <span>Capability Strength</span>
+                <span class="meter-value">0%</span>
+              </div>
+              <div class="meter-track">
+                <div class="meter-fill"></div>
+              </div>
+            </div>
+            <b>↗</b>
           </div>
-          <b>↗</b>
         </article>
 
         <!-- Card 2: Social Media Strategy -->
         <article class="skill reveal" data-potential="92">
-          <span>02</span>
-          <h3>Social Media<br>Marketing</h3>
-          <p>Social media content creation, multi-platform audience growth, and community engagement frameworks.</p>
-          <div class="software-badges">
-            <span class="software-tag">Content Creation</span>
-            <span class="software-tag">Audience Engagement</span>
-            <span class="software-tag">Brand Visibility</span>
-          </div>
-          <div class="capability-meter-wrap">
-            <div class="meter-header">
-              <span>Capability Strength</span>
-              <span class="meter-value">0%</span>
+          <div class="skill-detail-panel">
+            <span>02</span>
+            <h3>Social Media<br>Marketing</h3>
+            <p class="detail-highlight"><strong>Highlight:</strong> Our focus is on developing communication programs
+              that engage and build communities, as well as programs that strategically convert community members to
+              customers.</p>
+            <div class="skill-details">
+              <p>We specialize in specific social media platforms and their management. Our strategies encompass both
+                organic growth and advertising. We focus on the analysis and reporting of social media to ensure our
+                clients' brands are recognized and remain relevant.</p>
             </div>
-            <div class="meter-track">
-              <div class="meter-fill"></div>
+            <div class="software-badges">
+              <span class="software-tag">Content Creation</span>
+              <span class="software-tag">Audience Engagement</span>
+              <span class="software-tag">Brand Visibility</span>
             </div>
+            <div class="capability-meter-wrap">
+              <div class="meter-header">
+                <span>Capability Strength</span>
+                <span class="meter-value">0%</span>
+              </div>
+              <div class="meter-track">
+                <div class="meter-fill"></div>
+              </div>
+            </div>
+            <b>↗</b>
           </div>
-          <b>↗</b>
         </article>
 
         <!-- Card 3: SEO, AEO & GEO -->
         <article class="skill reveal" data-potential="95">
-          <span>03</span>
-          <h3>SEO & Content<br>Development</h3>
-          <p>SEO content writing for websites, blogs, Answer Engine Optimization (AEO), and Generative Engine
-            Optimization (GEO).</p>
-          <div class="software-badges">
-            <span class="software-tag">On page SEO</span>
-            <span class="software-tag">Off page SEO</span>
-            <span class="software-tag">Technical SEO</span>
-          </div>
-          <div class="capability-meter-wrap">
-            <div class="meter-header">
-              <span>Capability Strength</span>
-              <span class="meter-value">0%</span>
+          <div class="skill-detail-panel">
+            <span>03</span>
+            <h3>SEO & Content<br>Development</h3>
+            <p class="detail-highlight"><strong>Highlight:</strong> Achieving superior search rankings across Google and
+              AI Overviews with specialized knowledge in various SEO techniques.</p>
+            <div class="skill-details">
+              <p>I offer a range of SEO services, including technical SEO, keyword analysis and integration, and other
+                on-page optimization tasks. I practice Generative Engine Optimization (GEO) and Answer Engine
+                Optimization (AEO) to adapt to the evolving preferences of artificial intelligence and gain advantageous
+                positions for your content in search results. I offer off-page optimization services to improve your
+                backlink profile and local business listings. My goal is to improve your organic search rankings and, in
+                turn, drive more customers to your business.</p>
             </div>
-            <div class="meter-track">
-              <div class="meter-fill"></div>
+            <div class="software-badges">
+              <span class="software-tag">On page SEO</span>
+              <span class="software-tag">Off page SEO</span>
+              <span class="software-tag">Technical SEO</span>
             </div>
+            <div class="capability-meter-wrap">
+              <div class="meter-header">
+                <span>Capability Strength</span>
+                <span class="meter-value">0%</span>
+              </div>
+              <div class="meter-track">
+                <div class="meter-fill"></div>
+              </div>
+            </div>
+            <b>↗</b>
           </div>
-          <b>↗</b>
         </article>
 
         <!-- Card 4: Project handling -->
         <article class="skill reveal" data-potential="85">
-          <span>04</span>
-          <h3>Project handling<br></h3>
-          <p>Proofreading, clear communication, campaign planning, training delivery, and mentoring interns and team
-            members.</p>
-          <div class="software-badges">
-            <span class="software-tag">Training Delivery</span>
-            <span class="software-tag">Mentoring</span>
-            <span class="software-tag">Proofreading</span>
-          </div>
-          <div class="capability-meter-wrap">
-            <div class="meter-header">
-              <span>Capability Strength</span>
-              <span class="meter-value">0%</span>
+          <div class="skill-detail-panel">
+            <span>04</span>
+            <h3>Project handling<br></h3>
+            <p class="detail-highlight"><strong>Highlight:</strong> I manage projects from start to finish making sure
+              they are done on budget, on time and in line with a company's brand image.</p>
+            <div class="skill-details">
+              <p>I manage various aspects of a project and help bridge gaps between the beginning, middle and end of a
+                project. I have the ability to synthesize diverse and often conflicting information including feedback
+                from different levels of management to achieve project goals. I communicate regularly with clients and
+                project team members to keep them informed of project progress, challenges and to address any concerns
+                they may have. My focus is on helping organizations achieve corporate objectives through the work I do
+                on various projects.</p>
             </div>
-            <div class="meter-track">
-              <div class="meter-fill"></div>
+            <div class="software-badges">
+              <span class="software-tag">Training Delivery</span>
+              <span class="software-tag">Mentoring</span>
+              <span class="software-tag">Proofreading</span>
             </div>
+            <div class="capability-meter-wrap">
+              <div class="meter-header">
+                <span>Capability Strength</span>
+                <span class="meter-value">0%</span>
+              </div>
+              <div class="meter-track">
+                <div class="meter-fill"></div>
+              </div>
+            </div>
+            <b>↗</b>
           </div>
-          <b>↗</b>
         </article>
 
         <!-- Card 5: AI assisted marketing & AI video generation -->
         <article class="skill ai-card reveal" data-potential="90">
-          <span>05</span>
-          <h3>AI assisted marketing & AI video generation<br></h3>
-          <p>Leveraging AI tools for accelerated content workflows, precise targeting, and generating high-retention
-            video marketing campaigns.</p>
-          <div class="software-badges">
-            <span class="software-tag">AI Tools</span>
-            <span class="software-tag">ChatGPT</span>
-            <span class="software-tag">Video Generation</span>
-          </div>
-          <div class="capability-meter-wrap">
-            <div class="meter-header">
-              <span>Capability Strength</span>
-              <span class="meter-value">0%</span>
+          <div class="skill-detail-panel">
+            <span>05</span>
+            <h3>AI assisted marketing & AI video generation<br></h3>
+            <p class="detail-highlight"><strong>Highlight:</strong> Using AI to boost production while keeping your
+              project's personal touch.</p>
+            <div class="skill-details">
+              <p>I optimize my productivity with a range of AI-powered applications and services. For example, I can
+                transcribe audio with AI and edit text with AI. I brainstorm content ideas and examine data with AI.
+                With my team's combination of AI and human resources, we can manage your projects at a fraction of the
+                cost while improving quality and increasing speed.</p>
             </div>
-            <div class="meter-track">
-              <div class="meter-fill"></div>
+            <div class="software-badges">
+              <span class="software-tag">AI Tools</span>
+              <span class="software-tag">ChatGPT</span>
+              <span class="software-tag">Video Generation</span>
             </div>
+            <div class="capability-meter-wrap">
+              <div class="meter-header">
+                <span>Capability Strength</span>
+                <span class="meter-value">0%</span>
+              </div>
+              <div class="meter-track">
+                <div class="meter-fill"></div>
+              </div>
+            </div>
+            <b>↗</b>
           </div>
-          <b>↗</b>
         </article>
 
         <!-- Card 6: Automation and optimization -->
         <article class="skill reveal" data-potential="80">
-          <span>06</span>
-          <h3>Automation &<br>Optimization</h3>
-          <p>Implementing workflow automation, conducting technical SEO audits, and continuously refining digital
-            strategies for maximum efficiency.</p>
-          <div class="software-badges">
-            <span class="software-tag">Automation</span>
-            <span class="software-tag">SEO Audits</span>
-            <span class="software-tag">Optimization</span>
-          </div>
-          <div class="capability-meter-wrap">
-            <div class="meter-header">
-              <span>Capability Strength</span>
-              <span class="meter-value">0%</span>
+          <div class="skill-detail-panel">
+            <span>06</span>
+            <h3>Content Creation</h3>
+            <p class="detail-highlight"><strong>Highlight:</strong> I tell captivating stories that educate and
+              entertain. My stories inspire audiences to take action.</p>
+            <div class="skill-details">
+              <p>I can help create all forms of digital content, from start to finish, including videos. I am a holistic
+                content creator. I am a strategic thinker, and am passionate about helping you create content that meets
+                your business goals and effectiveness metrics. I am well versed in writing for various digital platforms
+                and various tones of voice.</p>
             </div>
-            <div class="meter-track">
-              <div class="meter-fill"></div>
+            <div class="software-badges">
+              <span class="software-tag">Automation</span>
+              <span class="software-tag">SEO Audits</span>
+              <span class="software-tag">Optimization</span>
             </div>
+            <div class="capability-meter-wrap">
+              <div class="meter-header">
+                <span>Capability Strength</span>
+                <span class="meter-value">0%</span>
+              </div>
+              <div class="meter-track">
+                <div class="meter-fill"></div>
+              </div>
+            </div>
+            <b>↗</b>
           </div>
-          <b>↗</b>
         </article>
       </div>
     </section>

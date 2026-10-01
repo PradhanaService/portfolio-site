@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Munish Prabhu K — Projects & Case Studies: Dragon's Delight, Firstcry, and BiTS Informatics." />
+  <meta name="description" content="Explore selected projects and case studies by Munish Prabhu K." />
   <meta name="theme-color" content="#080b12" />
   <title>Work — Munish Prabhu K | Digital Marketing Executive</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
@@ -32,7 +32,12 @@
     <a class="talk small" href="index.html#contact">Let's talk <b>↗</b></a>
   </header>
 
-  <main>
+  <header class="detail-nav" hidden>
+    <a class="project-back" href="work.html"><span aria-hidden="true">←</span><span>Back to all projects</span></a>
+    <a class="brand" href="index.html" aria-label="MPK home">MPK<span>•</span></a>
+  </header>
+
+  <main id="work-listing">
     <!-- Page Hero Header -->
     <section class="page-hero">
       <div class="hero-decor" aria-hidden="true">
@@ -47,7 +52,7 @@
         <span class="decor-pill violet float-3" style="right: 6%; top: 68%;">Meta Ads</span>
       </div>
       <p class="eyebrow">04 / Featured Projects</p>
-      <h1>Projects built with <em>strategy & impact.</em></h1>
+      <h1>Campaigns and Projects <em>That Delivered Measurable Results</em></h1>
       <p class="lede">Real-world marketing strategies, market research, SEO analysis, and ad campaigns delivered for client brands.</p>
     </section>
 
@@ -59,13 +64,24 @@
     </section>
   </main>
 
+  <main id="work-detail" class="project-detail" hidden aria-live="polite"></main>
+
   <footer>
     <a class="brand" href="index.html">MPK<span>•</span></a>
     <p>Munish Prabhu K — Digital Marketing Executive | Coimbatore, Tamil Nadu</p>
 
     <small>© 2026 Munish Prabhu K. All rights reserved.</small>
-  </footer>
+  <!-- Floating CTA Button -->
+  <a class="floating-work-btn" href="work.html" aria-label="View my work"><span>View my work</span> <b>↗</b></a>
 
   <script type="module" src="script.js"></script>
+  <script>
+    if (new URLSearchParams(window.location.search).has('project')) {
+      document.getElementById('work-listing').hidden = true;
+      document.getElementById('work-detail').hidden = false;
+      document.querySelector('.detail-nav').hidden = false;
+      document.body.classList.add('project-detail-page');
+    }
+  </script>
 </body>
 </html>

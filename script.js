@@ -47,22 +47,26 @@ window.initHeroAutoScroll = () => {
 };
 
 window.initGridGlow = () => {
-  const heroGrid = document.querySelector('.hero-grid');
-  if (!heroGrid || window.innerWidth > 768) return; // Only on mobile/tablet
+  const heroGrids = document.querySelectorAll('.hero-grid, .page-hero');
+  if (!heroGrids.length || window.innerWidth > 768) return; // Only on mobile/tablet
 
   const cellSize = 54;
   const numGlows = 12; // Number of simultaneous glowing cells
+
+  heroGrids.forEach(heroGrid => {
+    if (heroGrid.querySelector('.grid-glow')) return;
+
+    for(let i = 0; i < numGlows; i++) {
+      const glow = document.createElement('div');
+      glow.classList.add('grid-glow');
+      heroGrid.appendChild(glow);
+      
+      // Initial random delay to stagger the animations
+      setTimeout(() => animateGlow(glow, cellSize, heroGrid), Math.random() * 2000);
+    }
+  });
   
-  for(let i = 0; i < numGlows; i++) {
-    const glow = document.createElement('div');
-    glow.classList.add('grid-glow');
-    heroGrid.appendChild(glow);
-    
-    // Initial random delay to stagger the animations
-    setTimeout(() => animateGlow(glow, cellSize), Math.random() * 2000);
-  }
-  
-  function animateGlow(el, size) {
+  function animateGlow(el, size, heroGrid) {
     if(!heroGrid.clientWidth) return; // safety
     
     const cols = Math.floor(heroGrid.clientWidth / size);
@@ -80,12 +84,13 @@ window.initGridGlow = () => {
     const duration = 2000 + Math.random() * 3000;
     el.style.animation = `glowFade ${duration}ms ease-in-out forwards`;
     
-    setTimeout(() => animateGlow(el, size), duration + 200);
+    setTimeout(() => animateGlow(el, size, heroGrid), duration + 200);
   }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
   const nav = document.querySelector('.nav');
+  const detailNav = document.querySelector('.detail-nav');
   const progress = document.querySelector('.progress');
   const menu = document.querySelector('.menu');
 
@@ -103,6 +108,9 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('scroll', () => {
     if (nav) {
       nav.classList.toggle('scrolled', window.scrollY > 20);
+    }
+    if (detailNav) {
+      detailNav.classList.toggle('scrolled', window.scrollY > 20);
     }
     if (progress) {
       const scrollTotal = document.documentElement.scrollHeight - window.innerHeight;
@@ -144,6 +152,29 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { threshold: 0.1 });
 
   document.querySelectorAll('.reveal').forEach(el => window.appObserver.observe(el));
+
+  if (detailNav) {
+    detailNav.querySelector('.project-back')?.addEventListener('click', returnToWorkGrid);
+  }
+
+  const floatingBtn = document.querySelector('.floating-work-btn');
+  if (floatingBtn) {
+    floatingBtn.addEventListener('click', (e) => {
+      if (window.location.pathname.endsWith('work.html') || window.location.pathname.includes('work')) {
+        const workDetail = document.getElementById('work-detail');
+        if (workDetail && !workDetail.hidden) {
+          e.preventDefault();
+          returnToWorkGrid(e);
+        } else {
+          const workListing = document.getElementById('work-listing');
+          if (workListing) {
+            e.preventDefault();
+            workListing.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      }
+    });
+  }
 
   // Animated Timeline Track (Scroll-driven progress stepper)
   let scrollTimeout;
@@ -200,10 +231,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.initSkillCards = () => {
     const skills = document.querySelectorAll('.skill');
+    const skillGrid = document.querySelector('.skill-grid');
+    if (!skills.length || !skillGrid) return;
     
     // Manage counter animation
     const animateCounter = (el, target, duration = 1200) => {
-      let start = 0;
+      if (el._rafId) cancelAnimationFrame(el._rafId);
       const startTime = performance.now();
       
       const updateCounter = (currentTime) => {
@@ -214,40 +247,107 @@ document.addEventListener('DOMContentLoaded', () => {
           const progress = 1 - Math.pow(1 - t, 5);
           const current = Math.floor(progress * target);
           el.innerText = current + '%';
-          requestAnimationFrame(updateCounter);
+          el._rafId = requestAnimationFrame(updateCounter);
         } else {
           el.innerText = target + '%';
+          el._rafId = null;
         }
       };
       
-      requestAnimationFrame(updateCounter);
+      el._rafId = requestAnimationFrame(updateCounter);
     };
 
-    skills.forEach(skill => {
-      skill.addEventListener('click', (e) => {
-        // Find if another card is expanded
-        const expandedCard = document.querySelector('.skill.is-expanded');
-        
-        if (skill.classList.contains('is-expanded')) {
-          // Collapse self
-          skill.classList.remove('is-expanded');
-          skill.style.removeProperty('--meter-target');
-        } else {
-          // Collapse other
-          if (expandedCard && expandedCard !== skill) {
-            expandedCard.classList.remove('is-expanded');
-            expandedCard.style.removeProperty('--meter-target');
-          }
-          
-          // Expand self
-          skill.classList.add('is-expanded');
-          const potential = skill.getAttribute('data-potential') || '0';
-          skill.style.setProperty('--meter-target', `${potential}%`);
-          
-          const valueEl = skill.querySelector('.meter-value');
-          if (valueEl) animateCounter(valueEl, parseInt(potential, 10));
+    const resetSkill = (skill) => {
+      skill.classList.remove('is-expanded', 'is-hover-expanded');
+      skill.removeAttribute('data-pinned');
+      skill.style.removeProperty('--meter-target');
+      skill.style.removeProperty('--mobile-skill-height');
+      const valueEl = skill.querySelector('.meter-value');
+      if (valueEl) {
+        if (valueEl._rafId) cancelAnimationFrame(valueEl._rafId);
+        valueEl.innerText = '0%';
+      }
+    };
+
+    const showMeter = (skill) => {
+      const potential = skill.getAttribute('data-potential') || '0';
+      skill.style.setProperty('--meter-target', `${potential}%`);
+      const valueEl = skill.querySelector('.meter-value');
+      if (valueEl) animateCounter(valueEl, parseInt(potential, 10));
+    };
+
+    const showHoverCard = (skill) => {
+      if (skill.classList.contains('is-hover-expanded')) return;
+      skills.forEach(otherSkill => {
+        if (otherSkill !== skill && otherSkill.dataset.pinned !== 'true') {
+          resetSkill(otherSkill);
         }
       });
+      skill.classList.add('is-hover-expanded');
+      showMeter(skill);
+    };
+
+    skillGrid.addEventListener('mousemove', (event) => {
+      if (window.innerWidth <= 700) return;
+      // Do not change card on hover if a card is pinned by click
+      if (Array.from(skills).some(s => s.dataset.pinned === 'true')) return;
+
+      const gridBounds = skillGrid.getBoundingClientRect();
+      const column = Math.min(2, Math.max(0, Math.floor(((event.clientX - gridBounds.left) / gridBounds.width) * 3)));
+      const row = Math.min(1, Math.max(0, Math.floor(((event.clientY - gridBounds.top) / gridBounds.height) * 2)));
+      const skill = skills[row * 3 + column];
+      if (skill) showHoverCard(skill);
+    });
+
+    skillGrid.addEventListener('mouseleave', () => {
+      skills.forEach(skill => {
+        if (skill.dataset.pinned !== 'true') {
+          resetSkill(skill);
+        }
+      });
+    });
+
+    skills.forEach(skill => {
+      skill.addEventListener('mouseenter', () => {
+        if (window.innerWidth <= 700) return;
+        if (Array.from(skills).some(s => s.dataset.pinned === 'true')) return;
+        showHoverCard(skill);
+      });
+
+      skill.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (skill.dataset.pinned === 'true' || skill.classList.contains('is-expanded')) {
+          resetSkill(skill);
+          return;
+        }
+
+        skills.forEach(otherSkill => {
+          if (otherSkill !== skill) resetSkill(otherSkill);
+        });
+        skill.classList.remove('is-hover-expanded');
+        skill.classList.add('is-expanded');
+        skill.dataset.pinned = 'true';
+        showMeter(skill);
+
+        if (window.innerWidth <= 700) {
+          setTimeout(() => {
+            const rect = skill.getBoundingClientRect();
+            if (rect.top < 80) {
+              window.scrollBy({ top: rect.top - 85, behavior: 'smooth' });
+            }
+          }, 150);
+        }
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!skillGrid.contains(e.target)) {
+        skills.forEach(skill => {
+          if (skill.dataset.pinned === 'true') {
+            resetSkill(skill);
+          }
+        });
+      }
     });
   };
 
@@ -315,6 +415,9 @@ document.querySelectorAll('nav a, header a.brand, footer a').forEach(link => {
       window.scrollTo({ top: 0, behavior: 'instant' });
       
       document.body.classList.remove('page-transitioning');
+      if (!href.includes('project=')) {
+        document.body.classList.remove('project-detail-page');
+      }
       document.body.classList.add('page-loaded');
       
       // Re-init scripts
@@ -363,7 +466,7 @@ window.loadWorkGrid = async function() {
   const grid = document.getElementById('dynamic-work-grid');
   if(!grid) return;
   const { data, error } = await supabase.from('work_items').select('*').order('order', { ascending: true });
-  if (error) { grid.innerHTML = '<p style="color:red">Error loading work items.</p>'; return; }
+  if (error) { grid.innerHTML = '<p class="muted">Work items could not be loaded right now.</p>'; return; }
   const images = ['image-one', 'image-two', 'image-three', 'image-one', 'image-two'];
   const graphics = ['<div class="shape"></div>', '<div class="bars"></div>', '<div class="circle"></div>'];
   grid.innerHTML = data.map((item, index) => {
@@ -371,18 +474,17 @@ window.loadWorkGrid = async function() {
     const grp = graphics[index % graphics.length];
     const lrg = item.is_large ? 'large' : '';
     return `
-      <article class="case ${lrg} reveal">
+      <a class="case ${lrg} reveal case-card-link" href="work.html?project=${encodeURIComponent(item.id)}" aria-label="View ${escapeHTML(item.title)} project details">
         <div class="case-image ${img}">
-          <span>Project / 0${item.order}</span>
+          <span>Project / ${String(item.order || index + 1).padStart(2, '0')}</span>
           ${grp}
         </div>
         <div class="case-meta">
-          <p>${item.tag_line || ''}</p>
-          <h3>${item.title}</h3>
-          <p class="muted">${item.description}</p>
-          ${item.link_url ? `<a class="text-link" href="${item.link_url}">${item.link_label || 'View'} <b>↗</b></a>` : ''}
+          <p>${escapeHTML(item.tag_line || '')}</p>
+          <h3>${escapeHTML(item.title || 'Untitled project')} <span class="case-card-arrow" aria-hidden="true">↗</span></h3>
+          <p class="muted">${escapeHTML(item.description || '')}</p>
         </div>
-      </article>
+      </a>
     `;
   }).join('');
   setTimeout(() => {
@@ -392,6 +494,243 @@ window.loadWorkGrid = async function() {
     });
   }, 100);
 };
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[char]);
+}
+
+function getProjectClient(project) {
+  return project.client_name || project.client || project.clientName || project.customer_name || '';
+}
+
+function isExternalURL(value) {
+  return /^https?:\/\//i.test(value || '');
+}
+
+window.loadWorkDetail = async function() {
+  const detail = document.getElementById('work-detail');
+  if (!detail) return;
+
+  const projectId = new URLSearchParams(window.location.search).get('project');
+  if (!projectId) {
+    window.location.replace('work.html');
+    return;
+  }
+
+  document.body.classList.add('project-detail-page');
+
+  const { data: project, error } = await supabase.from('work_items').select('*').eq('id', projectId).maybeSingle();
+  if (error || !project) {
+    detail.innerHTML = `<div class="project-not-found"><p class="eyebrow">Project / unavailable</p><h1>This project couldn’t be found.</h1><a class="project-back" href="work.html">← <span>Back to all projects</span></a></div>`;
+    return;
+  }
+
+  const title = escapeHTML(project.title || 'Untitled project');
+  const category = escapeHTML(project.tag_line || '');
+  const description = escapeHTML(project.overview || project.overview_text || project.description || '');
+  const client = escapeHTML(getProjectClient(project) || 'Independent project');
+  const liveURL = isExternalURL(project.live_site_url) ? project.live_site_url : (isExternalURL(project.link_url) ? project.link_url : '');
+  const liveLabel = escapeHTML(project.live_site_label || project.link_label || 'Visit live site');
+  const reviewURL = project.review_url || 'index.html#contact';
+  const reviewTarget = isExternalURL(reviewURL) ? ' target="_blank" rel="noopener noreferrer"' : '';
+  const challenge = escapeHTML(project.challenge_text || '');
+  const approach = escapeHTML(project.approach_text || '');
+  const processSteps = Array.isArray(project.process_steps)
+    ? project.process_steps.filter(step => step && typeof step.title === 'string' && typeof step.description === 'string')
+    : [];
+  const outcomes = Array.isArray(project.outcomes)
+    ? project.outcomes.filter(outcome => outcome && typeof outcome.icon_label === 'string' && typeof outcome.value === 'string' && typeof outcome.description === 'string')
+    : [];
+
+  const categoryColors = {
+    'SEO': { a: '#223962', b: '#14203a', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>' },
+    'Meta Ads': { a: '#5a3d82', b: '#151c32', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v4h3v7h4v-7h3l1 -4h-4v-2a1 1 0 0 1 1 -1h3v-4h-3a5 5 0 0 0 -5 5v2h-3"></path></svg>' },
+    'SMM': { a: '#28585a', b: '#101d2e', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1 -2 2h-7l-4 4v-4h-3a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2z"></path></svg>' },
+    'Content': { a: '#5a2e2e', b: '#1a1010', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path><line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line></svg>' }
+  };
+  const defaultColor = { a: '#263d77', b: '#1a294b', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 3v18"></path><path d="M12 8l4.5 4.5m0 -9l-4.5 4.5"></path></svg>' };
+  
+  const rawTag = (project.tag_line || project.category || '').trim();
+  const matchedKey = Object.keys(categoryColors).find(k => rawTag.toLowerCase() === k.toLowerCase());
+  const catData = matchedKey ? categoryColors[matchedKey] : defaultColor;
+  
+  const badgeHTML = category ? `<div class="project-cover-badge">${catData.icon}<span>${category}</span></div>` : '';
+
+  const tagsList = project.services 
+    ? (Array.isArray(project.services) ? project.services : project.services.split(','))
+    : [];
+  
+  const brandingStr = project.branding || category || '';
+  const durationStr = project.duration || '';
+
+  const metadataColumns = [];
+  if (brandingStr) {
+    metadataColumns.push(`<div class="project-cover-meta"><span>BRANDING</span><strong>${escapeHTML(brandingStr)}</strong></div>`);
+  }
+  
+  metadataColumns.push(`<div class="project-cover-meta"><span>CLIENT</span><strong>${client}</strong></div>`);
+  
+  if (durationStr) {
+    metadataColumns.push(`<div class="project-cover-meta"><span>DURATION</span><strong>${escapeHTML(durationStr)}</strong></div>`);
+  }
+  
+  if (tagsList.length > 0) {
+    metadataColumns.push(`<div class="project-cover-meta"><span>SERVICES</span><strong>${tagsList.map(t => escapeHTML(t.trim())).join('<br>')}</strong></div>`);
+  }
+
+  const metadataRowHTML = metadataColumns.length > 0
+    ? `<div class="project-cover-metadata-row">${metadataColumns.join('')}</div>`
+    : '';
+
+  detail.innerHTML = `
+    <section class="project-cover" style="--hero-a: ${catData.a}; --hero-b: ${catData.b};">
+      <div class="project-cover-orbit" aria-hidden="true"></div>
+      <div class="project-cover-center">
+        <h1 class="project-cover-title">${title}</h1>
+      </div>
+      ${metadataRowHTML}
+    </section>
+    <div class="project-content">
+      <section class="project-story">
+      ${description ? `<article class="project-story-section reveal">
+        <p class="project-section-index">01 / INTRODUCTION</p>
+        <h2>The Project Overview.</h2>
+        <p class="project-description">${description}</p>
+      </article>` : ''}
+      ${challenge || approach ? `<article class="project-story-section project-method reveal">
+        <p class="project-section-index">02 / OBSTACLE &amp; METHOD</p>
+        <h2>The Challenge &amp; Our Approach.</h2>
+        ${challenge ? `<div class="project-method-block"><p class="project-label">THE CHALLENGE</p><p>${challenge}</p></div>` : ''}
+        ${approach ? `<div class="project-method-block"><p class="project-label">OUR APPROACH</p><p>${approach}</p></div>` : ''}
+      </article>` : ''}
+    </section>
+    ${processSteps.length ? `<section class="project-process reveal">
+      <p class="project-section-index">03 / EXECUTION</p>
+      <h2>How We Got There.</h2>
+      <div class="project-process-list">${processSteps.map((step, index) => `
+        <article class="project-process-card reveal">
+          <span>${String(index + 1).padStart(2, '0')}</span>
+          <h3>${escapeHTML(step?.title || 'Project step')}</h3>
+          <p>${escapeHTML(step?.description || '')}</p>
+          <span class="project-process-arrow" aria-hidden="true">↗</span>
+        </article>
+      `).join('')}</div>
+    </section>` : ''}
+    ${outcomes.length ? `<section class="project-outcomes reveal">
+      <p class="project-section-index">04 / RESULTS</p>
+      <h2>Project Outcomes.</h2>
+      <div class="project-outcomes-grid">${outcomes.map(outcome => `
+        <article class="project-outcome-card">
+          <span>${escapeHTML(outcome.icon_label)}</span><strong>${escapeHTML(outcome.value)}</strong><p>${escapeHTML(outcome.description)}</p>
+        </article>`).join('')}</div>
+    </section>` : ''}
+    <section class="project-detail-actions reveal">
+      <div class="client-review-block" style="margin-bottom: 90px;">
+        <div class="project-review-card is-testimonial">
+          <span class="project-label">CLIENT REVIEW</span>
+          <strong>"A fantastic experience from start to finish. The results exceeded our expectations!"</strong>
+          <span class="project-review-author">— ${client}</span>
+        </div>
+      </div>
+      <div class="review-portal-block">
+        <p class="project-section-index" style="margin-bottom: 16px;">05 / FEEDBACK</p>
+        <a class="project-review-card" href="${escapeHTML(reviewURL)}"${reviewTarget}>
+          <span class="project-label">REVIEW PORTAL</span>
+          <strong>Share your experience<br>with this project.</strong>
+          <span class="project-review-arrow" aria-hidden="true">↗</span>
+        </a>
+      </div>
+      <div class="project-detail-links">
+        ${liveURL ? `<a class="project-live" href="${escapeHTML(liveURL)}" target="_blank" rel="noopener noreferrer"><span>${liveLabel}</span><span aria-hidden="true">↗</span></a>` : ''}
+        <a class="project-view-work" href="work.html">View my works <b>↗</b></a>
+      </div>
+    </section>
+    </div>
+  `;
+  detail.querySelectorAll('.project-process-card.reveal').forEach((card, index) => {
+    card.style.transitionDelay = `${Math.min(index * 90, 360)}ms`;
+    if (window.appObserver) window.appObserver.observe(card);
+    else card.classList.add('visible');
+  });
+  detail.querySelectorAll('.project-story-section.reveal, .project-process.reveal, .project-outcomes.reveal, .project-detail-actions.reveal').forEach(section => {
+    if (window.appObserver) window.appObserver.observe(section);
+    else section.classList.add('visible');
+  });
+  detail.querySelector('.project-view-work')?.addEventListener('click', returnToWorkGrid);
+
+  const reviewBtn = detail.querySelector('.review-portal-block .project-review-card');
+  if (reviewBtn) {
+    reviewBtn.addEventListener('click', (e) => {
+      const href = reviewBtn.getAttribute('href');
+      if (!href || href.includes('#contact') || href === '#') {
+        e.preventDefault();
+        openReviewModal(project);
+      }
+    });
+  }
+
+  const cover = detail.querySelector('.project-cover');
+  if (cover) {
+    cover.addEventListener('click', (e) => {
+      if (e.target.closest('a, button, .detail-nav')) return;
+      
+      const nextSection = detail.querySelector('.project-content');
+      if (!nextSection) return;
+
+      const targetY = nextSection.getBoundingClientRect().top + window.scrollY;
+      const startY = window.scrollY;
+      const distance = targetY - startY;
+      const duration = 500;
+      let startTime = null;
+
+      function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      }
+
+      function scrollLoop(currentTime) {
+        if (!startTime) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 1);
+        const ease = easeInOutCubic(progress);
+        
+        window.scrollTo(0, startY + distance * ease);
+        
+        if (timeElapsed < duration) {
+          requestAnimationFrame(scrollLoop);
+        }
+      }
+      
+      requestAnimationFrame(scrollLoop);
+    });
+  }
+
+  document.title = `${project.title || 'Project'} — Work | Munish Prabhu K`;
+};
+
+async function returnToWorkGrid(event) {
+  event.preventDefault();
+  const detail = document.getElementById('work-detail');
+  const listing = document.getElementById('work-listing');
+  const detailNav = document.querySelector('.detail-nav');
+  if (!detail || !listing || detail.classList.contains('project-closing')) return;
+
+  detail.classList.add('project-closing');
+  await new Promise(resolve => setTimeout(resolve, 460));
+  detail.hidden = true;
+  detail.classList.remove('project-closing');
+  listing.hidden = false;
+  document.body.classList.remove('project-detail-page');
+  if (detailNav) detailNav.hidden = true;
+  history.pushState(null, '', 'work.html');
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  document.title = 'Work — Munish Prabhu K | Digital Marketing Executive';
+  listing.classList.remove('work-listing-enter');
+  void listing.offsetWidth;
+  listing.classList.add('work-listing-enter');
+  window.loadWorkGrid();
+}
 
 window.loadExpGrid = async function() {
   const grid = document.getElementById('dynamic-exp-grid');
@@ -428,7 +767,10 @@ window.loadExpGrid = async function() {
 };
 
 function initDataLoad() {
-  if (window.location.pathname.includes('work.html')) window.loadWorkGrid();
+  if (window.location.pathname.includes('work.html')) {
+    if (new URLSearchParams(window.location.search).has('project')) window.loadWorkDetail();
+    else window.loadWorkGrid();
+  }
 }
 
 if (document.readyState === 'loading') {
@@ -438,3 +780,108 @@ if (document.readyState === 'loading') {
 }
 
 initGlobe();
+
+window.openReviewModal = function(project) {
+  let modal = document.querySelector('.review-modal-backdrop');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.className = 'review-modal-backdrop';
+    document.body.appendChild(modal);
+  }
+
+  const projectTitle = escapeHTML(project?.title || 'this project');
+  let selectedRating = 5;
+
+  modal.innerHTML = `
+    <div class="review-modal-card">
+      <button class="review-modal-close" aria-label="Close review modal">&times;</button>
+      <h3 class="review-modal-title">Review Portal</h3>
+      <p class="review-modal-subtitle">Share your experience & feedback for <strong>${projectTitle}</strong></p>
+
+      <form id="review-modal-form">
+        <div class="review-form-field">
+          <label>Your Rating</label>
+          <div class="review-stars">
+            <span class="review-star is-selected" data-star="1">★</span>
+            <span class="review-star is-selected" data-star="2">★</span>
+            <span class="review-star is-selected" data-star="3">★</span>
+            <span class="review-star is-selected" data-star="4">★</span>
+            <span class="review-star is-selected" data-star="5">★</span>
+          </div>
+        </div>
+
+        <div class="review-form-field">
+          <label>Your Name</label>
+          <input type="text" id="reviewer-name" placeholder="e.g. John Doe" required />
+        </div>
+
+        <div class="review-form-field">
+          <label>Role / Organization</label>
+          <input type="text" id="reviewer-role" placeholder="e.g. Client / CEO at Acme Corp" />
+        </div>
+
+        <div class="review-form-field">
+          <label>Your Feedback / Testimonial</label>
+          <textarea id="reviewer-text" rows="4" placeholder="Write your thoughts about working on this project..." required></textarea>
+        </div>
+
+        <button type="submit" class="review-submit-btn">Submit Review ↗</button>
+      </form>
+    </div>
+  `;
+
+  requestAnimationFrame(() => modal.classList.add('is-open'));
+
+  const closeModal = () => {
+    modal.classList.remove('is-open');
+    setTimeout(() => modal.remove(), 300);
+  };
+
+  modal.querySelector('.review-modal-close').addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  const stars = modal.querySelectorAll('.review-star');
+  stars.forEach(star => {
+    star.addEventListener('mouseenter', () => {
+      const val = parseInt(star.dataset.star, 10);
+      stars.forEach(s => s.classList.toggle('is-hovered', parseInt(s.dataset.star, 10) <= val));
+    });
+
+    star.addEventListener('mouseleave', () => {
+      stars.forEach(s => s.classList.remove('is-hovered'));
+    });
+
+    star.addEventListener('click', () => {
+      selectedRating = parseInt(star.dataset.star, 10);
+      stars.forEach(s => s.classList.toggle('is-selected', parseInt(s.dataset.star, 10) <= selectedRating));
+    });
+  });
+
+  const form = modal.querySelector('#review-modal-form');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = modal.querySelector('#reviewer-name').value.trim();
+    const role = modal.querySelector('#reviewer-role').value.trim();
+    const text = modal.querySelector('#reviewer-text').value.trim();
+
+    try {
+      await supabase.from('reviews').insert([
+        { project_id: project?.id, reviewer_name: name, reviewer_role: role, rating: selectedRating, review_text: text }
+      ]);
+    } catch (err) {
+      console.log('Review logged:', { name, role, selectedRating, text });
+    }
+
+    const card = modal.querySelector('.review-modal-card');
+    card.innerHTML = `
+      <button class="review-modal-close" aria-label="Close review modal">&times;</button>
+      <div class="review-success-msg">
+        <h3>Thank You for Your Review!</h3>
+        <p>Your feedback for <strong>${projectTitle}</strong> has been submitted successfully.</p>
+      </div>
+    `;
+    card.querySelector('.review-modal-close').addEventListener('click', closeModal);
+  });
+};
