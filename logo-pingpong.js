@@ -226,7 +226,21 @@ function initPleasantLogoPingPong() {
     }
   }
 
+  const isMobile = () => window.innerWidth <= 760 || (window.getComputedStyle(box).display === 'none');
+
+  function stop() {
+    if (raf) {
+      cancelAnimationFrame(raf);
+      raf = null;
+      _ppGlobalRaf = null;
+    }
+  }
+
   function loop(now) {
+    if (isMobile()) {
+      stop();
+      return;
+    }
     const dt = Math.min((now - last) / 1000, 0.05);
     last = now;
     update(dt);
@@ -236,20 +250,33 @@ function initPleasantLogoPingPong() {
   }
 
   function start() {
+    if (isMobile()) {
+      stop();
+      return;
+    }
     if (balls.length === 0) spawnBalls();
     draw();
 
     if (!raf) {
       last = performance.now();
       raf = requestAnimationFrame(loop);
+      _ppGlobalRaf = raf;
     }
   }
 
-  // Force setup & continuous start
-  spawnBalls();
-  start();
+  // Force setup & continuous start on desktop
+  if (!isMobile()) {
+    spawnBalls();
+    start();
+  } else {
+    stop();
+  }
 
   const ro = new ResizeObserver(() => {
+    if (isMobile()) {
+      stop();
+      return;
+    }
     measure();
     if (balls.length === 0) {
       spawnBalls();
@@ -263,10 +290,19 @@ function initPleasantLogoPingPong() {
   });
   ro.observe(box);
 
+  window.addEventListener('resize', () => {
+    if (isMobile()) {
+      stop();
+    } else {
+      start();
+    }
+  });
+
   window.addEventListener('pageshow', start);
   window.addEventListener('load', start);
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) start();
+    if (!document.hidden && !isMobile()) start();
+    else if (document.hidden) stop();
   });
 }
 

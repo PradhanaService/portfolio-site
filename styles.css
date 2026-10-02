@@ -1986,12 +1986,14 @@ body.project-detail-page footer { margin-top: 0; }
   transition: opacity 0.35s ease-out;
 }
 
-.timeline-item.is-active .timeline-checkbox {
+.timeline-item.is-active .timeline-checkbox,
+.timeline-item.is-passed .timeline-checkbox {
   border-color: var(--blue);
   background: var(--blue);
 }
 
-.timeline-item.is-active .timeline-checkbox svg {
+.timeline-item.is-active .timeline-checkbox svg,
+.timeline-item.is-passed .timeline-checkbox svg {
   opacity: 1;
 }
 
@@ -2004,6 +2006,13 @@ body.project-detail-page footer { margin-top: 0; }
   opacity: 0.05;
   transform: translateY(12px) scale(1);
   transition: transform 0.35s ease-out, opacity 0.35s ease-out, border-color 0.35s ease-out, background 0.35s ease-out;
+}
+
+.timeline-item.is-passed .timeline-card {
+  opacity: 1;
+  border-color: rgba(120, 169, 255, 0.25);
+  background: #0d1424;
+  transform: translateY(0) scale(1);
 }
 
 .timeline-item.is-active .timeline-card {
@@ -2039,11 +2048,7 @@ body.project-detail-page footer { margin-top: 0; }
 }
 
 .timeline-card > b {
-  position: absolute;
-  right: 25px;
-  bottom: 20px;
-  color: var(--blue);
-  font-size: 20px;
+  display: none;
 }
 .philosophy {
   padding: 140px 7vw;
@@ -3757,6 +3762,12 @@ footer div {
 @media (min-width: 761px) and (max-width: 1100px) {
   .logo-pingpong { width: 250px; right: 3%; }
   .page-hero h1, .page-hero .lede { max-width: 58%; }
+}
+
+@media (max-width: 760px) {
+  .logo-pingpong {
+    display: none !important;
+  }
 }
 
 /* ==========================================================================

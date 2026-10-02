@@ -429,6 +429,7 @@
           alert(error.message);
           return;
         }
+        const reviewUrlVal = document.getElementById('work-review-url')?.value?.trim();
         const payload = {
           order: parseInt(document.getElementById('work-order').value),
           tag_line: document.getElementById('work-tag').value,
@@ -443,20 +444,37 @@
           approach_text: document.getElementById('work-approach').value,
           duration: document.getElementById('work-duration').value,
           live_site_url: document.getElementById('work-live-url').value,
-          review_url: document.getElementById('work-review-url').value,
           process_steps: processSteps,
           outcomes,
         };
-        
-        if (id) {
-          const { error } = await supabase.from('work_items').update(payload).eq('id', id);
-          if (error) alert('Error updating work: ' + error.message);
-        } else {
-          const { error } = await supabase.from('work_items').insert(payload);
-          if (error) alert('Error inserting work: ' + error.message);
+
+        if (reviewUrlVal) {
+          payload.review_url = reviewUrlVal;
         }
-        resetWorkForm();
-        loadWork();
+        
+        let saveError = null;
+        if (id) {
+          let res = await supabase.from('work_items').update(payload).eq('id', id);
+          if (res.error && res.error.message && res.error.message.includes('review_url')) {
+            delete payload.review_url;
+            res = await supabase.from('work_items').update(payload).eq('id', id);
+          }
+          saveError = res.error;
+          if (saveError) alert('Error updating work: ' + saveError.message);
+        } else {
+          let res = await supabase.from('work_items').insert(payload);
+          if (res.error && res.error.message && res.error.message.includes('review_url')) {
+            delete payload.review_url;
+            res = await supabase.from('work_items').insert(payload);
+          }
+          saveError = res.error;
+          if (saveError) alert('Error inserting work: ' + saveError.message);
+        }
+
+        if (!saveError) {
+          resetWorkForm();
+          loadWork();
+        }
       });
 
       document.getElementById('exp-form').addEventListener('submit', async (e) => {

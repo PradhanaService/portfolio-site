@@ -38,9 +38,12 @@
     height: 65px;
     padding: 0 20px;
   }
-  .nav nav,
+  .nav:not(.open) nav,
   .talk {
     display: none;
+  }
+  .logo-pingpong {
+    display: none !important;
   }
   .menu {
     display: flex;
@@ -57,18 +60,22 @@
     height: 10px;
     display: block;
   }
+  .nav.open {
+    background: rgba(15, 23, 42, 0.98);
+  }
   .nav.open nav {
-    display: flex;
+    display: flex !important;
     position: absolute;
     top: 65px;
     left: 0;
     right: 0;
-    background: var(--bg);
+    background: rgba(15, 23, 42, 0.98);
     flex-direction: column;
     padding: 20px 24px 28px;
     gap: 18px;
     border-bottom: 1px solid var(--line);
     box-shadow: 0 20px 30px rgba(0, 0, 0, 0.5);
+    z-index: 99;
   }
   .nav.open nav a {
     font-size: 15px;
@@ -452,7 +459,8 @@
     max-width: none;
   }
 
-  .timeline-item.is-active .timeline-card {
+  .timeline-item.is-active .timeline-card,
+  .timeline-item.is-passed .timeline-card {
     transform: none;
   }
 
@@ -650,7 +658,8 @@
   }
 
   .timeline-card,
-  .timeline-item.is-active .timeline-card {
+  .timeline-item.is-active .timeline-card,
+  .timeline-item.is-passed .timeline-card {
     padding: 18px;
     opacity: 1;
     transform: none;

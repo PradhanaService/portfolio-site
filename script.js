@@ -166,13 +166,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Mobile Menu Toggle
   if (menu && nav) {
-    menu.addEventListener('click', () => {
+    menu.addEventListener('click', (e) => {
+      e.stopPropagation();
       const isOpen = nav.classList.toggle('open');
       menu.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     });
 
     document.querySelectorAll('nav a').forEach(a => {
-      a.addEventListener('click', () => nav.classList.remove('open'));
+      a.addEventListener('click', () => {
+        nav.classList.remove('open');
+        menu.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (nav.classList.contains('open') && !nav.contains(e.target)) {
+        nav.classList.remove('open');
+        menu.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && nav.classList.contains('open')) {
+        nav.classList.remove('open');
+        menu.setAttribute('aria-expanded', 'false');
+      }
     });
   }
 
@@ -250,12 +268,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const scrolledPx = triggerPoint - trackRect.top;
     const progressPercent = Math.min(Math.max((scrolledPx / trackRect.height) * 100, 0), 100);
     progressLine.style.height = `${progressPercent}%`;
+
+    // 2. Stepper check for each timeline item (tick marks stay checked once reached by progress line)
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    timelineItems.forEach(item => {
+      const checkbox = item.querySelector('.timeline-checkbox');
+      const targetPoint = checkbox ? (checkbox.getBoundingClientRect().top + checkbox.offsetHeight * 0.5) : item.getBoundingClientRect().top;
+      
+      // When the progress line reaches or passes this checkbox
+      if (targetPoint <= triggerPoint + 10) {
+        item.classList.add('is-passed');
+      } else {
+        item.classList.remove('is-passed');
+      }
+    });
   }
 
   window.initTimeline = function() {
     updateTimelineProgress();
     
-    // 2. Setup IntersectionObserver for timeline items (reversible, both ways)
+    // 2. Setup IntersectionObserver for timeline items (current focal item)
     const timelineItems = document.querySelectorAll('.timeline-item');
     if (timelineItems.length > 0) {
       if (window.timelineObserver) {
@@ -419,6 +451,7 @@ document.addEventListener('DOMContentLoaded', () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
       if (window.initGridGlow) window.initGridGlow();
+      if (window.initTimeline) window.initTimeline();
     }, 250);
   });
 });
@@ -877,7 +910,6 @@ window.loadExpGrid = async function() {
         <span class="timeline-date">${item.date_range || `STEP 0${index + 1}`}</span>
         <h3 class="timeline-title">${item.title}</h3>
         <p class="timeline-desc">${item.description ? item.description.replace(/\n/g, '<br>') : ''}</p>
-        <b>↗</b>
       </div>
     </div>
   `).join('');
