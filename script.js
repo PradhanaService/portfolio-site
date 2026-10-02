@@ -457,10 +457,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Page Transition & Nav Link click logic
-document.querySelectorAll('nav a, header a.brand, footer a').forEach(link => {
+document.querySelectorAll('nav a, header a.brand, footer a, header a.talk, a.talk').forEach(link => {
   link.addEventListener('click', async (e) => {
     const href = link.getAttribute('href');
-    if (!href || href.startsWith('http') || link.target === '_blank') return;
+    if (!href || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:') || link.target === '_blank') return;
     
     const url = new URL(href, window.location.origin);
     const normalizePath = (p) => p.replace(/\/index\.html$/, '/').replace(/\/$/, '') || '/';
@@ -481,11 +481,6 @@ document.querySelectorAll('nav a, header a.brand, footer a').forEach(link => {
       return;
     }
 
-    // If navigating to another page that has a hash (e.g. index.html#about from expertise.html)
-    if (url.hash) {
-      return;
-    }
-
     e.preventDefault();
     
     document.body.classList.add('page-transitioning');
@@ -494,7 +489,8 @@ document.querySelectorAll('nav a, header a.brand, footer a').forEach(link => {
     await new Promise(r => setTimeout(r, 200));
 
     try {
-      const res = await fetch(href);
+      const fetchUrl = url.pathname;
+      const res = await fetch(fetchUrl);
       const html = await res.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
@@ -506,11 +502,25 @@ document.querySelectorAll('nav a, header a.brand, footer a').forEach(link => {
       
       // update active link
       document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-      const currentActive = document.querySelector(`nav a[href="${href}"]`);
+      const pageBase = url.pathname.split('/').pop() || 'index.html';
+      const currentActive = document.querySelector(`nav a[href="${pageBase}"]`);
       if (currentActive) currentActive.classList.add('active');
       
       history.pushState(null, '', href);
-      window.scrollTo({ top: 0, behavior: 'instant' });
+      
+      if (url.hash) {
+        const hashId = url.hash.substring(1);
+        const targetEl = document.getElementById(hashId);
+        if (targetEl) {
+          setTimeout(() => {
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 100);
+        } else {
+          window.scrollTo({ top: 0, behavior: 'instant' });
+        }
+      } else {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
       
       document.body.classList.remove('page-transitioning');
       if (!href.includes('project=')) {
