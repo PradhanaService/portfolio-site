@@ -98,13 +98,9 @@
     max-width: 300px;
     transform: none;
   }
-  .portrait-ring {
-    width: 280px;
-    height: 340px;
-  }
   .portrait-placeholder {
-    height: 340px;
-    width: 270px;
+    height: 100%;
+    width: 100%;
   }
   .scroll-note {
     display: none;
@@ -234,6 +230,7 @@
   .page-hero .decor-pill,
   .page-hero .decor-icon,
   .page-hero .decor-chart,
+  .page-hero .exp-chart-container,
   .desktop-graph {
     display: none !important;
   }

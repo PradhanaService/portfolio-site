@@ -78,6 +78,9 @@ body {
 .detail-nav.scrolled { backdrop-filter: blur(18px); background: rgba(15, 23, 42, .85); border-color: var(--line); }
 .detail-nav .brand { font-size: 26px; }
 body.project-detail-page .nav { display: none; }
+body.project-detail-page #work-listing { display: none !important; }
+body.project-detail-page #work-detail { display: block !important; }
+body.project-detail-page .detail-nav { display: flex !important; }
 
 .brand {
   font-weight: 800;
@@ -282,44 +285,78 @@ nav a.active {
 }
 
 /* Traversing Data Streams */
+/* Traversing Data Streams (Background lines crossing right to left) */
 .data-streams {
   position: absolute;
-  top: 40px;
-  bottom: 40px;
-  right: -350px; 
-  width: 450px;  
+  inset: 0;
   pointer-events: none;
-  z-index: -1;
+  z-index: 0;
   overflow: hidden;
 }
 
 .stream {
   position: absolute;
-  height: 1.5px;
-  background: linear-gradient(270deg, transparent 0%, rgba(56, 189, 248, 0.8) 70%, #fff 100%);
+  height: 2px;
+  width: 260px;
+  background: linear-gradient(270deg, transparent 0%, rgba(56, 189, 248, 0.85) 70%, #ffffff 100%);
   border-radius: 2px;
   opacity: 0;
-  left: 100%;
+  right: -280px;
   box-shadow: 0 0 10px 1px rgba(56, 189, 248, 0.5);
+  pointer-events: none;
 }
 
 .stream::after {
   content: '';
   position: absolute;
   left: 0;
-  top: -1.5px;
-  width: 4px;
-  height: 4px;
-  background: #fff;
+  top: -2px;
+  width: 6px;
+  height: 6px;
+  background: #ffffff;
   border-radius: 50%;
-  box-shadow: 0 0 14px 4px var(--blue), 0 0 6px 2px #fff;
+  box-shadow: 0 0 14px 4px var(--blue), 0 0 6px 2px #ffffff;
 }
 
-@keyframes streamMove {
-  0% { transform: translateX(0); opacity: 0; }
-  5% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { transform: translateX(-650px); opacity: 0; }
+.stream-1 {
+  top: 15%;
+  animation: streamMoveRightToLeft 7s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: 0s;
+}
+
+.stream-2 {
+  top: 38%;
+  animation: streamMoveRightToLeft 8.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: 2.5s;
+}
+
+.stream-3 {
+  top: 62%;
+  animation: streamMoveRightToLeft 6.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: 4.8s;
+}
+
+.stream-4 {
+  top: 84%;
+  animation: streamMoveRightToLeft 9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: 1.2s;
+}
+
+@keyframes streamMoveRightToLeft {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(calc(-42vw - 60px));
+    opacity: 0;
+  }
 }
 
 .hero {
@@ -499,24 +536,10 @@ em {
   width: 100%;
 }
 
-.portrait-ring {
-  border: 1px solid #6b8fda;
-  border-radius: 24px;
-  width: 370px;
-  height: 440px;
-  position: absolute;
-  top: 20px;
-  left: 10px;
-  opacity: 0.4;
-}
-
 .portrait-placeholder {
-  height: 440px;
-  width: 330px;
+  height: 100%;
+  width: 100%;
   background: linear-gradient(145deg, #19243c, #0c1221 70%);
-  position: absolute;
-  right: 0;
-  top: 0;
   border-radius: 20px;
   overflow: hidden;
   border: 1px solid var(--line);
@@ -527,13 +550,8 @@ em {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 16%;
+  object-position: center top;
   display: block;
-  transition: transform 0.5s ease;
-}
-
-.portrait:hover .portrait-img {
-  transform: scale(1.03);
 }
 
 
@@ -1446,20 +1464,50 @@ em {
   display: none !important;
 }
 
+.project-detail.project-opening {
+  animation: project-detail-open 450ms ease-out both;
+}
+
 .project-detail.project-closing {
-  animation: project-detail-close .46s cubic-bezier(.22,1,.36,1) forwards;
+  animation: project-detail-close 460ms ease-out forwards;
   pointer-events: none;
 }
 
 .work-listing-enter { animation: work-listing-open .65s cubic-bezier(.22,1,.36,1) both; }
 
+@keyframes project-detail-open {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @keyframes project-detail-close {
-  to { opacity: 0; transform: translateY(18px) scale(.985); filter: blur(3px); }
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
 }
 
 @keyframes work-listing-open {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-detail.project-opening,
+  .project-detail.project-closing,
+  .work-listing-enter {
+    animation: none !important;
+  }
 }
 
 .project-detail {
@@ -1496,11 +1544,7 @@ em {
   animation: drift 10s ease-in-out infinite alternate;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .project-cover::before {
-    animation: none;
-  }
-}
+
 
 .project-cover::after {
   position: absolute;
@@ -1860,11 +1904,7 @@ em {
 
 .project-detail-links { display: flex; justify-content: flex-end; gap: 14px; padding-top: 20px; }
 
-@media (prefers-reduced-motion: reduce) {
-  .project-detail.project-closing,
-  .work-listing-enter,
-  .project-detail-actions { animation-duration: .01ms; }
-}
+
 
 .project-not-found { max-width: 660px; margin: 12vh auto; text-align: center; }
 .project-not-found h1 { margin: 18px 0 30px; font-size: clamp(36px, 6vw, 64px); }
@@ -2174,52 +2214,6 @@ footer div {
 }
 
 /* Portrait Pulsing Dots */
-.portrait-dot {
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background-color: var(--blue, #78a9ff);
-  opacity: 0.4;
-  pointer-events: none;
-  animation: pulse-dot 2.5s ease-in-out infinite alternate;
-  z-index: 10;
-}
-
-.portrait-dot.dot-1 {
-  top: 15%;
-  left: 20%;
-  width: 6px;
-  height: 6px;
-  animation-delay: 0s;
-}
-
-.portrait-dot.dot-2 {
-  top: 85%;
-  right: 18%;
-  width: 5px;
-  height: 5px;
-  animation-delay: 1.2s;
-}
-
-.portrait-dot.dot-3 {
-  top: 35%;
-  right: 5%;
-  width: 4px;
-  height: 4px;
-  animation-delay: 0.6s;
-}
-
-@keyframes pulse-dot {
-  0% {
-    transform: scale(1);
-    opacity: 0.15;
-  }
-  100% {
-    transform: scale(1.3);
-    opacity: 0.45;
-  }
-}
 
 /* Glowing Card Effect */
 .skill.glow-card {
@@ -2826,3 +2820,1243 @@ footer div {
 
 
 
+
+/* Styles extracted from experience.html */
+
+    /* Executive Hero Analytics Widget — Clean, Professional, Bigger */
+    .exp-chart-container {
+      position: absolute;
+      right: 5%;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 440px;
+      height: 270px;
+      background: rgba(10, 15, 30, 0.95);
+      border: 1px solid rgba(120, 169, 255, 0.15);
+      border-radius: 16px;
+      padding: 24px 24px 18px 20px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+      pointer-events: auto;
+      z-index: 2;
+      animation: expIdleFloat 7s ease-in-out infinite alternate;
+    }
+
+    @keyframes expIdleFloat {
+      0% { transform: translateY(-50%); }
+      100% { transform: translateY(calc(-50% - 8px)); }
+    }
+
+    /* Widget Header */
+    .exp-widget-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    .exp-widget-title {
+      font: 600 11.5px 'DM Mono', monospace;
+      color: rgba(248, 250, 252, 0.95);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .exp-widget-title::before {
+      content: '';
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10B981; /* Success Green */
+      box-shadow: 0 0 10px #10B981;
+    }
+
+    .exp-widget-pill {
+      font: 600 10px 'DM Mono', monospace;
+      color: #38BDF8;
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.05em;
+    }
+
+    /* Main Chart Body */
+    .exp-chart-body {
+      position: relative;
+      width: 100%;
+      height: 175px;
+      display: flex;
+    }
+
+    /* Y-Axis Scale */
+    .exp-y-axis {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 145px;
+      padding-right: 14px;
+      font: 500 10px 'DM Mono', monospace;
+      color: rgba(148, 163, 184, 0.5);
+      user-select: none;
+    }
+
+    /* Stage Canvas Area */
+    .exp-chart-stage {
+      position: relative;
+      flex: 1;
+      height: 100%;
+    }
+
+    /* Horizontal Grid Lines */
+    .exp-grid-lines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 145px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
+    .exp-grid-line {
+      width: 100%;
+      height: 1px;
+      border-top: 1px solid rgba(148, 163, 184, 0.08);
+    }
+    
+    .exp-grid-line:nth-child(2) {
+      border-top: 1px dashed rgba(148, 163, 184, 0.12);
+    }
+
+    /* SVG Curve Layer */
+    .exp-svg-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 145px;
+      pointer-events: none;
+      z-index: 2;
+      overflow: visible;
+    }
+
+    .exp-trend-path {
+      fill: none;
+      stroke: #38BDF8;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 800;
+      stroke-dashoffset: 800;
+      filter: drop-shadow(0 4px 6px rgba(56, 189, 248, 0.4));
+      transition: stroke-dashoffset 1.5s cubic-bezier(0.22, 1, 0.36, 1) 0.3s;
+    }
+
+    .exp-chart-container.visible .exp-trend-path,
+    .exp-chart-container.exp-animated .exp-trend-path {
+      stroke-dashoffset: 0;
+    }
+
+    .exp-area-path {
+      fill: url(#expRealAreaGrad);
+      opacity: 0;
+      transition: opacity 1s ease 0.6s;
+    }
+
+    .exp-chart-container.visible .exp-area-path,
+    .exp-chart-container.exp-animated .exp-area-path {
+      opacity: 1;
+    }
+
+    /* Columns Wrap */
+    .exp-cols-wrap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 145px;
+      z-index: 3;
+    }
+
+    .exp-col {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      cursor: pointer;
+    }
+
+    /* Professional Column Bar */
+    .exp-real-bar {
+      width: 44px;
+      background: linear-gradient(180deg, rgba(56, 189, 248, 0.25) 0%, rgba(37, 99, 235, 0.05) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-bottom: none;
+      border-radius: 4px 4px 0 0;
+      transform-origin: bottom;
+      transform: scaleY(0);
+      transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease, border-color 0.3s ease;
+    }
+
+    /* Bar grows only when JS adds .bar-loaded to its parent .exp-col (one by one) */
+    .exp-col.bar-loaded .exp-real-bar {
+      transform: scaleY(1);
+    }
+
+    .exp-col:hover .exp-real-bar,
+    .exp-col.active .exp-real-bar {
+      background: linear-gradient(180deg, rgba(56, 189, 248, 0.45) 0%, rgba(37, 99, 235, 0.1) 100%);
+      border-color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* Node Dot */
+    .exp-node-dot {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #fff;
+      border: 2px solid #38BDF8;
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    /* Node dot appears when bar is loaded */
+    .exp-col.bar-loaded .exp-node-dot {
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .exp-col:hover .exp-node-dot,
+    .exp-col.active .exp-node-dot {
+      transform: translate(-50%, -50%) scale(1.3);
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.8);
+      background: #38BDF8;
+      border-color: #fff;
+    }
+
+    /* Node Tag (Metric) */
+    .exp-node-tag {
+      position: absolute;
+      transform: translate(-50%, -32px);
+      font: 600 9.5px 'DM Mono', monospace;
+      color: rgba(255, 255, 255, 0.9);
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      padding: 3px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      pointer-events: none;
+    }
+    
+    .exp-chart-container.visible .exp-node-tag,
+    .exp-chart-container.exp-animated .exp-node-tag {
+      opacity: 1;
+      transform: translate(-50%, -24px);
+    }
+
+    /* Professional Tooltip Card */
+    .exp-col-tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-25px) scale(0.95);
+      opacity: 0;
+      pointer-events: none;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(56, 189, 248, 0.15);
+      padding: 10px 14px;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      white-space: nowrap;
+      transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+      z-index: 10;
+    }
+
+    .exp-col:hover .exp-col-tooltip,
+    .exp-col:focus .exp-col-tooltip,
+    .exp-col.active .exp-col-tooltip {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-35px) scale(1);
+    }
+
+    .exp-tt-title {
+      font: 700 12px 'DM Mono', monospace;
+      color: #fff;
+    }
+
+    .exp-tt-sub {
+      font: 500 11px Manrope, sans-serif;
+      color: rgba(148, 163, 184, 0.9);
+    }
+
+    /* X-Axis Year Labels */
+    .exp-x-label {
+      position: absolute;
+      bottom: -24px;
+      transform: translateX(-50%);
+      font: 600 11px 'DM Mono', monospace;
+      color: rgba(148, 163, 184, 0.6);
+      user-select: none;
+      letter-spacing: 0.05em;
+      transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    .exp-col:hover .exp-x-label,
+    .exp-col:focus .exp-x-label,
+    .exp-col.active .exp-x-label {
+      color: #fff;
+      transform: translateX(-50%) translateY(2px);
+    }
+
+    
+
+    @media (max-width: 980px) {
+      .exp-chart-container {
+        display: none !important;
+      }
+    }
+  
+/* Styles extracted from work.html */
+
+    /* Work Hero Folder Animation — scoped to .wf-* */
+    .wf-anim {
+      position: absolute;
+      top: 50%;
+      right: 14%;
+      width: 280px;
+      left: auto !important;
+      bottom: auto;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      pointer-events: none;
+      z-index: 10;
+      animation: wfIdleFloat 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes wfIdleFloat {
+      0% {
+        transform: translateY(-50%);
+      }
+
+      100% {
+        transform: translateY(calc(-50% - 7px));
+      }
+    }
+
+    /* 1. Folder Wrapper & Clickable Area */
+    .wf-folder-wrap {
+      position: relative;
+      pointer-events: auto;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: transform 0.25s cubic-bezier(.22, 1, .36, 1), filter 0.25s ease;
+      filter: drop-shadow(0 0 8px rgba(120, 169, 255, 0.4));
+      z-index: 3;
+    }
+
+    .wf-folder-wrap:hover {
+      transform: translateY(-3px) scale(1.03);
+      filter: drop-shadow(0 0 16px rgba(120, 169, 255, 0.8));
+    }
+
+    .wf-folder-wrap:active {
+      transform: translateY(0) scale(0.97);
+    }
+
+    .wf-folder-svg {
+      display: block;
+      overflow: visible;
+    }
+
+    .wf-lid {
+      transform-origin: 50% 100%;
+      transform-box: fill-box;
+      transition: transform 0.4s cubic-bezier(.22, 1, .36, 1), opacity 0.4s ease;
+    }
+
+    /* 2. Cursor Glyph & Click Ping */
+    .wf-cursor-wrap {
+      position: absolute;
+      top: 45%;
+      left: 55%;
+      pointer-events: none;
+      z-index: 10;
+      opacity: 0;
+      transform: translate(45px, 45px) scale(0.9);
+    }
+
+    .wf-cursor-svg {
+      display: block;
+      filter: drop-shadow(0 0 8px rgba(120, 169, 255, 0.6));
+    }
+
+    .wf-click-ping {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid var(--blue);
+      border-radius: 50%;
+      opacity: 0;
+      transform: scale(0);
+      pointer-events: none;
+    }
+
+    /* 3. Data-Stream Connector Lines SVG */
+    .wf-connectors-wrap {
+      width: 280px;
+      height: 28px;
+      margin: -6px 0;
+      position: relative;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .wf-connector-path {
+      fill: none;
+      stroke: rgba(120, 169, 255, 0.6);
+      stroke-width: 1.5;
+      stroke-dasharray: 4 4;
+      opacity: 0;
+    }
+
+    .wf-connector-dot {
+      fill: var(--blue);
+      opacity: 0;
+      filter: drop-shadow(0 0 6px rgba(120, 169, 255, 0.9));
+    }
+
+    /* 4. Files & Badges Initial State */
+    .wf-files {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      z-index: 2;
+    }
+
+    .wf-file {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      opacity: 0;
+      transform: translateY(-30px) scale(0.3);
+      pointer-events: none;
+    }
+
+    .wf-file-svg {
+      transition: filter 0.3s ease;
+    }
+
+    .wf-tick {
+      position: absolute;
+      top: -9px;
+      right: -9px;
+      opacity: 0;
+      transform: scale(0) rotate(-25deg);
+      filter: drop-shadow(0 0 6px rgba(120, 169, 255, 0.5));
+    }
+
+    .wf-tick-path {
+      stroke-dasharray: 20;
+      stroke-dashoffset: 20;
+    }
+
+    .wf-label {
+      font: 700 9px 'DM Mono', monospace;
+      color: rgba(120, 169, 255, 0.85);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    /* --- PLAY ANIMATION SEQUENCE --- */
+
+    /* Step 2: Animated Cursor Moves In & Clicks */
+    .wf-anim.wf-play .wf-cursor-wrap {
+      animation: wfCursorMove 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes wfCursorMove {
+      0% {
+        opacity: 0;
+        transform: translate(45px, 45px) scale(0.9);
+      }
+
+      35% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+      }
+
+      42% {
+        opacity: 1;
+        transform: translate(0, 0) scale(0.82);
+      }
+
+      52% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+      }
+
+      75% {
+        opacity: 1;
+        transform: translate(15px, 20px) scale(0.95);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(30px, 35px) scale(0.9);
+      }
+    }
+
+    .wf-anim.wf-play .wf-click-ping {
+      animation: wfPingRipple 0.45s ease 0.30s forwards;
+    }
+
+    @keyframes wfPingRipple {
+      0% {
+        opacity: 1;
+        transform: scale(0);
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(2.8);
+      }
+    }
+
+    /* Step 2 contact result: Folder Pop & Lid Open */
+    .wf-anim.wf-play .wf-folder-svg {
+      animation: wfFolderPop 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) 0.30s forwards;
+    }
+
+    @keyframes wfFolderPop {
+      0% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 8px rgba(120, 169, 255, .4));
+      }
+
+      45% {
+        transform: scale(1.08) translateY(-3px);
+        filter: drop-shadow(0 0 24px rgba(120, 169, 255, .95));
+      }
+
+      100% {
+        transform: scale(1) translateY(0);
+        filter: drop-shadow(0 0 10px rgba(120, 169, 255, .5));
+      }
+    }
+
+    .wf-anim.wf-play .wf-lid {
+      animation: wfLidOpen 0.45s cubic-bezier(.22, 1, .36, 1) 0.32s forwards;
+    }
+
+    @keyframes wfLidOpen {
+      0% {
+        transform: rotateX(0deg);
+        opacity: 1;
+      }
+
+      100% {
+        transform: rotateX(-55deg);
+        opacity: .4;
+      }
+    }
+
+    /* Step 3: Data-Stream Connector Lines animate as files travel */
+    .wf-anim.wf-play .wf-connector-1 {
+      animation: wfConnectorTrail 0.45s ease 0.38s forwards;
+    }
+
+    .wf-anim.wf-play .wf-connector-2 {
+      animation: wfConnectorTrail 0.45s ease 0.48s forwards;
+    }
+
+    .wf-anim.wf-play .wf-connector-3 {
+      animation: wfConnectorTrail 0.45s ease 0.58s forwards;
+    }
+
+    .wf-anim.wf-play .wf-connector-4 {
+      animation: wfConnectorTrail 0.45s ease 0.68s forwards;
+    }
+
+    .wf-anim.wf-play .wf-dot-1 {
+      animation: wfDotPulse 0.4s ease 0.38s forwards;
+    }
+
+    .wf-anim.wf-play .wf-dot-2 {
+      animation: wfDotPulse 0.4s ease 0.48s forwards;
+    }
+
+    .wf-anim.wf-play .wf-dot-3 {
+      animation: wfDotPulse 0.4s ease 0.58s forwards;
+    }
+
+    .wf-anim.wf-play .wf-dot-4 {
+      animation: wfDotPulse 0.4s ease 0.68s forwards;
+    }
+
+    @keyframes wfConnectorTrail {
+      0% {
+        opacity: 0;
+        stroke-dashoffset: 20;
+      }
+
+      40% {
+        opacity: 0.9;
+        stroke-dashoffset: 0;
+      }
+
+      80% {
+        opacity: 0.7;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
+
+    @keyframes wfDotPulse {
+      0% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.4);
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(1);
+      }
+    }
+
+    /* Step 3 & 4: 4 Files Fly Out Staggered with Elastic Bounce & Glow Flash as each lands */
+    .wf-anim.wf-play .wf-file-1 {
+      animation: wfFileFly1 0.48s cubic-bezier(0.34, 1.35, 0.64, 1) 0.38s forwards, wfFileGlowFlash 0.4s ease 0.72s 1;
+    }
+
+    .wf-anim.wf-play .wf-file-2 {
+      animation: wfFileFly2 0.48s cubic-bezier(0.34, 1.35, 0.64, 1) 0.48s forwards, wfFileGlowFlash 0.4s ease 0.82s 1;
+    }
+
+    .wf-anim.wf-play .wf-file-3 {
+      animation: wfFileFly3 0.48s cubic-bezier(0.34, 1.35, 0.64, 1) 0.58s forwards, wfFileGlowFlash 0.4s ease 0.92s 1;
+    }
+
+    .wf-anim.wf-play .wf-file-4 {
+      animation: wfFileFly4 0.48s cubic-bezier(0.34, 1.35, 0.64, 1) 0.68s forwards, wfFileGlowFlash 0.4s ease 1.02s 1;
+    }
+
+    @keyframes wfFileFly1 {
+      0% {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.3) rotate(-7deg);
+      }
+
+      75% {
+        opacity: 1;
+        transform: translateY(2px) scale(1.04) rotate(1deg);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotate(0deg);
+      }
+    }
+
+    @keyframes wfFileFly2 {
+      0% {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.3) rotate(6deg);
+      }
+
+      75% {
+        opacity: 1;
+        transform: translateY(2px) scale(1.04) rotate(-1deg);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotate(0deg);
+      }
+    }
+
+    @keyframes wfFileFly3 {
+      0% {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.3) rotate(-6deg);
+      }
+
+      75% {
+        opacity: 1;
+        transform: translateY(2px) scale(1.04) rotate(1deg);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotate(0deg);
+      }
+    }
+
+    @keyframes wfFileFly4 {
+      0% {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.3) rotate(7deg);
+      }
+
+      75% {
+        opacity: 1;
+        transform: translateY(2px) scale(1.04) rotate(-1deg);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotate(0deg);
+      }
+    }
+
+    @keyframes wfFileGlowFlash {
+      0% {
+        filter: drop-shadow(0 0 0px transparent);
+      }
+
+      50% {
+        filter: drop-shadow(0 0 16px rgba(120, 169, 255, 0.9));
+      }
+
+      100% {
+        filter: drop-shadow(0 0 0px transparent);
+      }
+    }
+
+    /* Continuous One-by-One Tick Box Glow Loop (SEO -> Meta Ads -> SMM -> Analytics) */
+    .wf-anim.wf-play .wf-file-1 .wf-tick {
+      animation: wfTickPop 0.35s cubic-bezier(.34, 1.56, .64, 1) 0.72s forwards, wfTickPulseLoop 3.2s ease-in-out 1.50s infinite;
+    }
+
+    .wf-anim.wf-play .wf-file-2 .wf-tick {
+      animation: wfTickPop 0.35s cubic-bezier(.34, 1.56, .64, 1) 0.82s forwards, wfTickPulseLoop 3.2s ease-in-out 2.30s infinite;
+    }
+
+    .wf-anim.wf-play .wf-file-3 .wf-tick {
+      animation: wfTickPop 0.35s cubic-bezier(.34, 1.56, .64, 1) 0.92s forwards, wfTickPulseLoop 3.2s ease-in-out 3.10s infinite;
+    }
+
+    .wf-anim.wf-play .wf-file-4 .wf-tick {
+      animation: wfTickPop 0.35s cubic-bezier(.34, 1.56, .64, 1) 1.02s forwards, wfTickPulseLoop 3.2s ease-in-out 3.90s infinite;
+    }
+
+    @keyframes wfTickPop {
+      0% {
+        opacity: 0;
+        transform: scale(0) rotate(-25deg);
+        filter: drop-shadow(0 0 0px transparent);
+      }
+
+      65% {
+        opacity: 1;
+        transform: scale(1.22) rotate(4deg);
+        filter: drop-shadow(0 0 14px rgba(120, 169, 255, .95));
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+        filter: drop-shadow(0 0 6px rgba(120, 169, 255, .5));
+      }
+    }
+
+    .wf-anim.wf-play .wf-file-1 .wf-tick-path {
+      animation: wfDraw 0.22s ease 0.78s forwards;
+    }
+
+    .wf-anim.wf-play .wf-file-2 .wf-tick-path {
+      animation: wfDraw 0.22s ease 0.88s forwards;
+    }
+
+    .wf-anim.wf-play .wf-file-3 .wf-tick-path {
+      animation: wfDraw 0.22s ease 0.98s forwards;
+    }
+
+    .wf-anim.wf-play .wf-file-4 .wf-tick-path {
+      animation: wfDraw 0.22s ease 1.08s forwards;
+    }
+
+    @keyframes wfDraw {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes wfTickPulseLoop {
+      0% {
+        filter: drop-shadow(0 0 6px rgba(120, 169, 255, .5));
+        transform: scale(1);
+      }
+
+      12% {
+        filter: drop-shadow(0 0 18px rgba(120, 169, 255, 1));
+        transform: scale(1.22);
+      }
+
+      24%,
+      100% {
+        filter: drop-shadow(0 0 6px rgba(120, 169, 255, .5));
+        transform: scale(1);
+      }
+    }
+
+    /* Static REST STATE / DONE STATE with continuous one-by-one tick glow loop */
+    .wf-anim.wf-done .wf-file {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .wf-anim.wf-done .wf-lid {
+      transform: rotateX(-55deg);
+      opacity: .4;
+    }
+
+    .wf-anim.wf-done .wf-tick {
+      opacity: 1;
+      filter: drop-shadow(0 0 6px rgba(120, 169, 255, .5));
+    }
+
+    .wf-anim.wf-done .wf-file-1 .wf-tick {
+      animation: wfTickPulseLoop 3.2s ease-in-out 0.0s infinite;
+    }
+
+    .wf-anim.wf-done .wf-file-2 .wf-tick {
+      animation: wfTickPulseLoop 3.2s ease-in-out 0.8s infinite;
+    }
+
+    .wf-anim.wf-done .wf-file-3 .wf-tick {
+      animation: wfTickPulseLoop 3.2s ease-in-out 1.6s infinite;
+    }
+
+    .wf-anim.wf-done .wf-file-4 .wf-tick {
+      animation: wfTickPulseLoop 3.2s ease-in-out 2.4s infinite;
+    }
+
+    .wf-anim.wf-done .wf-tick-path {
+      stroke-dashoffset: 0;
+    }
+
+    @media (max-width: 768px) {
+      .wf-anim {
+        display: none;
+      }
+    }
+
+/* ---------- Invisible Logo Bouncing Arena (Expertise Hero) ---------- */
+.logo-pingpong {
+  position: absolute;
+  right: 4%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(300px, 30vw, 400px);
+  height: clamp(250px, 25vw, 340px);
+  min-height: 250px;
+  overflow: visible;
+  z-index: 5;
+  pointer-events: none;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  box-shadow: none;
+}
+
+/* Subtle ambient canvas behind logos */
+.pp-ambient-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Sleek glass logo badge matching site's decor-pills & dark slate panels */
+.pp-logo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--text);
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(226, 232, 240, 0.2);
+  box-shadow: 
+    0 4px 14px rgba(0, 0, 0, 0.35),
+    0 0 10px rgba(56, 189, 248, 0.18);
+  will-change: transform;
+  pointer-events: none;
+  user-select: none;
+  z-index: 2;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.pp-logo svg {
+  width: 55%;
+  height: 55%;
+  color: #F8FAFC;
+  opacity: 0.92;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+/* Momentary gentle pulse applied upon wall touch */
+.pp-logo.is-pulsing {
+  border-color: rgba(56, 189, 248, 0.6);
+  box-shadow: 
+    0 4px 14px rgba(0, 0, 0, 0.35),
+    0 0 16px rgba(56, 189, 248, 0.3);
+}
+
+.pp-logo.is-pulsing svg {
+  opacity: 1;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.6));
+}
+
+@media (min-width: 761px) and (max-width: 1100px) {
+  .logo-pingpong { width: 250px; right: 3%; }
+  .page-hero h1, .page-hero .lede { max-width: 58%; }
+}
+
+/* ==========================================================================
+   Services Hero Search & Content Scroll Animation
+   ========================================================================== */
+.search-hero-animation {
+  position: absolute;
+  right: max(6vw, 32px);
+  top: 105px;
+  bottom: 24px;
+  margin: auto 0;
+  width: clamp(285px, 30vw, 390px);
+  height: clamp(260px, 30vw, 320px);
+  max-height: calc(100% - 130px);
+  pointer-events: none;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: opacity 0.35s ease;
+}
+
+/* 1. Central search icon in intro phase */
+.search-anim-center-icon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(1.3);
+  color: var(--blue);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.7));
+  z-index: 5;
+}
+
+.search-hero-animation.is-intro .search-anim-center-icon {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  animation: searchPulseGlow 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes searchPulseGlow {
+  from {
+    transform: translate(-50%, -50%) scale(0.96);
+    filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.5));
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1.08);
+    filter: drop-shadow(0 0 22px rgba(56, 189, 248, 0.9));
+  }
+}
+
+/* When zoomed out, center icon zooms out into bar and stops pulse animation */
+.search-hero-animation.is-zoomed .search-anim-center-icon,
+.search-hero-animation.is-typing .search-anim-center-icon,
+.search-hero-animation.is-scrolling .search-anim-center-icon {
+  opacity: 0 !important;
+  transform: translate(-50%, -60px) scale(0.4) !important;
+  animation: none !important;
+  pointer-events: none !important;
+}
+
+/* 2. Floating Search Bar Header */
+.search-anim-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: rgba(30, 41, 59, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.16);
+  border-radius: 999px;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.3),
+    0 0 14px rgba(56, 189, 248, 0.12);
+  opacity: 0;
+  transform: scale(0.92) translateY(12px);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-bottom: 6px;
+  flex-shrink: 0;
+  z-index: 4;
+}
+
+.search-hero-animation.is-zoomed .search-anim-bar {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.search-anim-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.search-anim-bar-icon {
+  color: var(--blue);
+  flex-shrink: 0;
+}
+
+.search-anim-query {
+  font: 500 12.5px 'Manrope', sans-serif;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-anim-cursor {
+  width: 2px;
+  height: 14px;
+  background: var(--blue);
+  display: inline-block;
+  opacity: 0;
+  flex-shrink: 0;
+}
+
+.search-hero-animation.is-typing .search-anim-cursor {
+  animation: cursorBlink 0.55s infinite;
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+.search-anim-badge {
+  font: 600 9.5px 'DM Mono', monospace;
+  color: var(--blue);
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 2.5px 7px;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+/* 3. Search metadata line */
+.search-anim-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: 400 10.5px 'DM Mono', monospace;
+  color: var(--muted);
+  padding: 0 12px;
+  margin-bottom: 7px;
+  opacity: 0;
+  flex-shrink: 0;
+  transition: opacity 0.3s ease;
+}
+
+.search-meta-dot {
+  color: rgba(226, 232, 240, 0.25);
+}
+
+.search-meta-verified {
+  color: var(--blue);
+}
+
+/* 4. Scrolling viewport with top/bottom soft mask */
+.search-scroll-viewport {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 88%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 88%, transparent 100%);
+}
+
+.search-hero-animation.is-zoomed .search-scroll-viewport {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Scroll track */
+.search-scroll-track {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 2px 20px;
+  will-change: transform;
+}
+
+.search-hero-animation.is-scrolling .search-scroll-track {
+  animation: scrollSerpTrack 5.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+@keyframes scrollSerpTrack {
+  0% {
+    transform: translateY(0);
+  }
+  10% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(-118px);
+  }
+  60% {
+    transform: translateY(-236px);
+  }
+  85% {
+    transform: translateY(-354px);
+  }
+  100% {
+    transform: translateY(-430px);
+  }
+}
+
+/* Individual SERP card */
+.search-serp-card {
+  background: rgba(30, 41, 59, 0.52);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(226, 232, 240, 0.12);
+  border-radius: 10px;
+  padding: 10px 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+  flex-shrink: 0;
+}
+
+.serp-card-top {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 4px;
+}
+
+.serp-card-favicon {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--blue);
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.6);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.serp-card-url {
+  font: 400 10px 'DM Mono', monospace;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+.serp-card-title {
+  font: 600 13px 'Manrope', sans-serif;
+  color: #F8FAFC;
+  margin: 0 0 3px 0;
+  letter-spacing: -0.01em;
+}
+
+.serp-card-desc {
+  font: 400 11px 'Manrope', sans-serif;
+  color: #cbd5e1;
+  line-height: 1.45;
+  margin: 0 0 6px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.serp-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.serp-card-tag {
+  font: 500 9px 'DM Mono', monospace;
+  color: var(--blue);
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  padding: 1.5px 6px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+@media (min-width: 761px) and (max-width: 1100px) {
+  .search-hero-animation {
+    width: 280px;
+    right: max(4vw, 20px);
+    max-height: 290px;
+  }
+  .page-hero h1, .page-hero .lede {
+    max-width: 52%;
+  }
+}
+
+@media (max-width: 760px) {
+  .search-hero-animation {
+    display: none !important;
+  }
+}
+
+  

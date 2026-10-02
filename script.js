@@ -1,90 +1,136 @@
 import { supabase } from './supabase-config.js';
 import { initGlobe } from './globe.js';
 
+let _heroAutoScrollCleanup = null;
+
 window.initHeroAutoScroll = () => {
+  if (_heroAutoScrollCleanup) {
+    _heroAutoScrollCleanup();
+    _heroAutoScrollCleanup = null;
+  }
+
   const currentPath = window.location.pathname.split('/').pop() || 'index.html';
-  if (currentPath === 'index.html' || currentPath === '') return;
+  if (currentPath === 'index.html' || currentPath === '' || currentPath.includes('experience.html')) return;
 
   const hero = document.querySelector('.page-hero, .hero');
   if (!hero) return;
-  
+
   let nextSection = hero.nextElementSibling;
   while (nextSection && (nextSection.tagName === 'SCRIPT' || nextSection.tagName === 'STYLE')) {
     nextSection = nextSection.nextElementSibling;
   }
   if (!nextSection) return;
 
+  // Skip auto-scroll if the user has already scrolled past the hero section
+  if (window.scrollY > 50) return;
+
   let userInteracted = false;
-  let scrollTimer;
-  
+  let scrollTimer = null;
+  let onSearchCompleteHandler = null;
+
   const cancelScroll = () => {
     userInteracted = true;
     cleanup();
   };
-  
+
   const cleanup = () => {
-    clearTimeout(scrollTimer);
+    if (scrollTimer) {
+      clearTimeout(scrollTimer);
+      scrollTimer = null;
+    }
+    if (onSearchCompleteHandler) {
+      window.removeEventListener('searchAnimationComplete', onSearchCompleteHandler);
+      onSearchCompleteHandler = null;
+    }
     window.removeEventListener('wheel', cancelScroll);
     window.removeEventListener('touchstart', cancelScroll);
+    window.removeEventListener('pointerdown', cancelScroll);
     window.removeEventListener('keydown', cancelScroll);
     window.removeEventListener('mousedown', cancelScroll);
   };
 
+  _heroAutoScrollCleanup = cleanup;
+
   setTimeout(() => {
     window.addEventListener('wheel', cancelScroll, { passive: true, once: true });
     window.addEventListener('touchstart', cancelScroll, { passive: true, once: true });
+    window.addEventListener('pointerdown', cancelScroll, { passive: true, once: true });
     window.addEventListener('keydown', cancelScroll, { passive: true, once: true });
     window.addEventListener('mousedown', cancelScroll, { passive: true, once: true });
-  }, 100);
-  
-  scrollTimer = setTimeout(() => {
+  }, 50);
+
+  const performScroll = (targetEl) => {
     cleanup();
-    // Only auto-scroll if the user hasn't scrolled manually
     if (!userInteracted && window.scrollY < 50) {
-      nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, 1000);
+  };
+
+  if (currentPath.includes('expertise.html')) {
+    // 1. expertise.html: Wait 1.5 seconds, then smooth-scroll down to content section
+    scrollTimer = setTimeout(() => {
+      performScroll(nextSection);
+    }, 1500);
+  } else if (currentPath.includes('services.html')) {
+    // 2. services.html: Auto-scroll when searchAnimationComplete event is received (first sequence)
+    const targetSection = document.querySelector('.services') || nextSection;
+    onSearchCompleteHandler = () => {
+      performScroll(targetSection);
+    };
+    window.addEventListener('searchAnimationComplete', onSearchCompleteHandler, { once: true });
+  } else {
+    // Default fallback delay (1s) for other pages if applicable
+    scrollTimer = setTimeout(() => {
+      performScroll(nextSection);
+    }, 1000);
+  }
 };
 
 window.initGridGlow = () => {
-  const heroGrids = document.querySelectorAll('.hero-grid, .page-hero');
-  if (!heroGrids.length || window.innerWidth > 768) return; // Only on mobile/tablet
-
-  const cellSize = 54;
-  const numGlows = 12; // Number of simultaneous glowing cells
+  const heroGrids = document.querySelectorAll('.hero-grid');
+  if (!heroGrids.length) return;
 
   heroGrids.forEach(heroGrid => {
-    if (heroGrid.querySelector('.grid-glow')) return;
+    const isMobile = window.innerWidth <= 768;
+    const cellSize = isMobile ? 40 : 54;
+    const numGlows = isMobile ? 14 : 10;
 
-    for(let i = 0; i < numGlows; i++) {
+    // Clear existing glows on resize/re-init to prevent duplicates
+    heroGrid.querySelectorAll('.grid-glow').forEach(g => g.remove());
+
+    for (let i = 0; i < numGlows; i++) {
       const glow = document.createElement('div');
       glow.classList.add('grid-glow');
+      glow.style.width = `${cellSize - 1}px`;
+      glow.style.height = `${cellSize - 1}px`;
+      glow.style.pointerEvents = 'none';
+      glow.style.zIndex = '0';
       heroGrid.appendChild(glow);
-      
-      // Initial random delay to stagger the animations
+
       setTimeout(() => animateGlow(glow, cellSize, heroGrid), Math.random() * 2000);
     }
   });
-  
+
   function animateGlow(el, size, heroGrid) {
-    if(!heroGrid.clientWidth) return; // safety
-    
+    if (!heroGrid.clientWidth || !heroGrid.clientHeight) return;
+
     const cols = Math.floor(heroGrid.clientWidth / size);
     const rows = Math.floor(heroGrid.clientHeight / size);
-    
+    if (cols <= 0 || rows <= 0) return;
+
     const col = Math.floor(Math.random() * cols);
     const row = Math.floor(Math.random() * rows);
-    
+
     el.style.left = `${col * size}px`;
     el.style.top = `${row * size}px`;
-    
+
     el.style.animation = 'none';
-    el.offsetHeight; 
-    
-    const duration = 2000 + Math.random() * 3000;
+    el.offsetHeight;
+
+    const duration = 1800 + Math.random() * 2500;
     el.style.animation = `glowFade ${duration}ms ease-in-out forwards`;
-    
-    setTimeout(() => animateGlow(el, size, heroGrid), duration + 200);
+
+    setTimeout(() => animateGlow(el, size, heroGrid), duration + 300);
   }
 };
 
@@ -142,16 +188,27 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Scroll Reveal Animations for generic reveal elements
+  window.checkRevealInViewport = function() {
+    const vh = window.innerHeight || document.documentElement.clientHeight || 800;
+    document.querySelectorAll('.reveal').forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top <= vh * 0.98 && rect.bottom >= -50) {
+        el.classList.add('visible');
+      }
+    });
+  };
+
   window.appObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
+      if (entry.isIntersecting || (entry.boundingClientRect && entry.boundingClientRect.top < (window.innerHeight || 800))) {
         entry.target.classList.add('visible');
         window.appObserver.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.1 });
+  }, { threshold: 0.01, rootMargin: '50px 0px 50px 0px' });
 
   document.querySelectorAll('.reveal').forEach(el => window.appObserver.observe(el));
+  window.checkRevealInViewport();
 
   if (detailNav) {
     detailNav.querySelector('.project-back')?.addEventListener('click', returnToWorkGrid);
@@ -356,6 +413,14 @@ document.addEventListener('DOMContentLoaded', () => {
   window.initHeroAutoScroll();
   window.initGridGlow();
   window.initSkillCards();
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (window.initGridGlow) window.initGridGlow();
+    }, 250);
+  });
 });
 
 // Page Transition & Nav Link click logic
@@ -426,6 +491,7 @@ document.querySelectorAll('nav a, header a.brand, footer a').forEach(link => {
           el.classList.remove('visible');
           window.appObserver.observe(el);
         });
+        if (window.checkRevealInViewport) window.checkRevealInViewport();
       }
       if (window.initTimeline) {
         window.initTimeline();
@@ -441,14 +507,31 @@ document.querySelectorAll('nav a, header a.brand, footer a').forEach(link => {
       if (window.initGridGlow) {
         window.initGridGlow();
       }
+
+      // Re-init page-specific hero animations after SPA swap
+      if (href.includes('expertise.html')) {
+        const hadPingPong = !!window.initLogoPingPong;
+        import('./logo-pingpong.js').then(() => {
+          if (hadPingPong && window.initLogoPingPong) window.initLogoPingPong();
+        });
+      }
+      if (href.includes('services.html')) {
+        const hadSearchAnim = !!window.initServicesSearchAnimation;
+        import('./services-search-animation.js').then(() => {
+          if (hadSearchAnim && window.initServicesSearchAnimation) window.initServicesSearchAnimation();
+        });
+      }
       
       initGlobe();
       
-      if (href.includes('work.html') && window.loadWorkGrid) {
-        window.loadWorkGrid();
+      if (href.includes('work.html')) {
+        if (window.loadWorkGrid) window.loadWorkGrid();
+        if (window.initWorkAnim) window.initWorkAnim();
       }
-      if (href.includes('experience.html') && window.initTimeline) {
-        window.initTimeline();
+      if (href.includes('experience.html')) {
+        if (window.loadExpGrid) window.loadExpGrid();
+        if (window.initTimeline) window.initTimeline();
+        setTimeout(() => { if (window.renderHeroBarChart) window.renderHeroBarChart(); }, 50);
       }
       
       setTimeout(() => {
@@ -487,6 +570,18 @@ window.loadWorkGrid = async function() {
       </a>
     `;
   }).join('');
+  if (!grid.dataset.hasClickListener) {
+    grid.dataset.hasClickListener = 'true';
+    grid.addEventListener('click', (e) => {
+      const card = e.target.closest('.case-card-link');
+      if (card) {
+        e.preventDefault();
+        const href = card.getAttribute('href');
+        history.pushState(null, '', href);
+        window.loadWorkDetail();
+      }
+    });
+  }
   setTimeout(() => {
     document.querySelectorAll('#dynamic-work-grid .reveal').forEach(el => {
       el.classList.add('visible');
@@ -520,9 +615,25 @@ window.loadWorkDetail = async function() {
   }
 
   document.body.classList.add('project-detail-page');
+  const listing = document.getElementById('work-listing');
+  const detailNav = document.querySelector('.detail-nav');
+  if (listing) listing.hidden = true;
+  detail.hidden = false;
+  if (detailNav) detailNav.hidden = false;
 
+  detail.classList.remove('project-opening', 'project-closing');
+  void detail.offsetWidth;
+  detail.classList.add('project-opening');
+  setTimeout(() => detail.classList.remove('project-opening'), 500);
+  window.scrollTo({ top: 0, behavior: 'instant' });
+
+  console.log('[loadWorkDetail] Fetching project ID:', projectId);
   const { data: project, error } = await supabase.from('work_items').select('*').eq('id', projectId).maybeSingle();
+  console.log('[loadWorkDetail] Supabase result:', { projectId, error, project });
+
   if (error || !project) {
+    console.error('[loadWorkDetail] Failed to load project:', { projectId, error, project });
+    detail.hidden = false;
     detail.innerHTML = `<div class="project-not-found"><p class="eyebrow">Project / unavailable</p><h1>This project couldn’t be found.</h1><a class="project-back" href="work.html">← <span>Back to all projects</span></a></div>`;
     return;
   }
@@ -642,12 +753,10 @@ window.loadWorkDetail = async function() {
           <span class="project-review-arrow" aria-hidden="true">↗</span>
         </a>
       </div>
-      <div class="project-detail-links">
-        ${liveURL ? `<a class="project-live" href="${escapeHTML(liveURL)}" target="_blank" rel="noopener noreferrer"><span>${liveLabel}</span><span aria-hidden="true">↗</span></a>` : ''}
-        <a class="project-view-work" href="work.html">View my works <b>↗</b></a>
-      </div>
+      ${liveURL ? `<div class="project-detail-links"><a class="project-live" href="${escapeHTML(liveURL)}" target="_blank" rel="noopener noreferrer"><span>${liveLabel}</span><span aria-hidden="true">↗</span></a></div>` : ''}
     </section>
     </div>
+    <a class="project-view-work" href="work.html">View my works <b>↗</b></a>
   `;
   detail.querySelectorAll('.project-process-card.reveal').forEach((card, index) => {
     card.style.transitionDelay = `${Math.min(index * 90, 360)}ms`;
@@ -709,8 +818,19 @@ window.loadWorkDetail = async function() {
   document.title = `${project.title || 'Project'} — Work | Munish Prabhu K`;
 };
 
+function reinitWorkHero() {
+  if (window.initHeroAutoScroll) window.initHeroAutoScroll();
+  if (window.initGridGlow) window.initGridGlow();
+  const heroAnim = document.getElementById('wf-hero-anim') || document.querySelector('.wf-anim');
+  if (heroAnim) {
+    heroAnim.classList.remove('wf-play', 'wf-done');
+    void heroAnim.offsetWidth;
+    heroAnim.classList.add('wf-play');
+  }
+}
+
 async function returnToWorkGrid(event) {
-  event.preventDefault();
+  if (event) event.preventDefault();
   const detail = document.getElementById('work-detail');
   const listing = document.getElementById('work-listing');
   const detailNav = document.querySelector('.detail-nav');
@@ -729,7 +849,8 @@ async function returnToWorkGrid(event) {
   listing.classList.remove('work-listing-enter');
   void listing.offsetWidth;
   listing.classList.add('work-listing-enter');
-  window.loadWorkGrid();
+  if (window.loadWorkGrid) window.loadWorkGrid();
+  reinitWorkHero();
 }
 
 window.loadExpGrid = async function() {
@@ -764,12 +885,263 @@ window.loadExpGrid = async function() {
   if (window.initTimeline) {
     window.initTimeline();
   }
+  if (window.renderHeroBarChart) {
+    window.renderHeroBarChart();
+  }
 };
+
+window.renderHeroBarChart = function() {
+  const chartContainer = document.getElementById('exp-hero-chart');
+  if (!chartContainer) return;
+
+  const timelineItems = document.querySelectorAll('#dynamic-exp-grid .timeline-item');
+  if (!timelineItems.length) return;
+
+  const validEntries = [];
+
+  timelineItems.forEach(item => {
+    const dateEl = item.querySelector('.timeline-date');
+    const titleEl = item.querySelector('.timeline-title');
+    if (!dateEl) return;
+
+    const dateText = dateEl.textContent.trim();
+    const titleText = titleEl ? titleEl.textContent.trim() : '';
+
+    // Extract leading 4-digit year e.g. "2020 — 2023" -> 2020, "2025" -> 2025
+    const match = dateText.match(/\b(19\d\d|20\d\d)\b/);
+    if (match) {
+      let tag = 'Role';
+      const titleLower = titleText.toLowerCase();
+      if (titleLower.includes('bachelor') || titleLower.includes('college') || titleLower.includes('b.com')) tag = 'Bachelor of Commerce';
+      else if (titleLower.includes('certified') || titleLower.includes('certification') || titleLower.includes('workshop')) tag = 'AI Tools Workshop';
+      else if (titleLower.includes('executive') || titleLower.includes('bits')) tag = 'BiTS Informatics Exec';
+      else if (titleLower.includes('analytics') || titleLower.includes('kgisl')) tag = 'KGiSL Analytics';
+
+      validEntries.push({
+        year: parseInt(match[1], 10),
+        rawText: match[1],
+        title: titleText,
+        tag: tag
+      });
+    }
+  });
+
+  if (!validEntries.length) return;
+
+  // Sort chronologically ascending left to right
+  validEntries.sort((a, b) => a.year - b.year);
+
+  const total = validEntries.length;
+  const stageWidth = 360;
+  const gridHeight = 145;
+
+  const minBarPx = 55;
+  const maxBarPx = 135;
+
+  const metricTags = ['+0% • Start', '+65% • Cert', '+120% • Spec', '+180% • Exec'];
+
+  // Precise bar heights and Y-coordinates
+  const itemsData = validEntries.map((entry, i) => {
+    const heightPx = total === 1 
+      ? maxBarPx 
+      : minBarPx + ((maxBarPx - minBarPx) * (i / (total - 1)));
+    const x = (stageWidth / (total + 1)) * (i + 1);
+    const topY = gridHeight - heightPx;
+    const tag = metricTags[i] || `+${(i + 1) * 45}%`;
+
+    return {
+      ...entry,
+      x: x.toFixed(1),
+      topY: topY.toFixed(1),
+      heightPx: heightPx.toFixed(1),
+      growthTag: tag
+    };
+  });
+
+  // Smooth SVG curve passing EXACTLY through topY at each x
+  let linePath = `M ${itemsData[0].x} ${itemsData[0].topY}`;
+  for (let i = 0; i < itemsData.length - 1; i++) {
+    const p0 = itemsData[i];
+    const p1 = itemsData[i + 1];
+    const cpX1 = (parseFloat(p0.x) + (parseFloat(p1.x) - parseFloat(p0.x)) * 0.5).toFixed(1);
+    const cpY1 = p0.topY;
+    const cpX2 = (parseFloat(p0.x) + (parseFloat(p1.x) - parseFloat(p0.x)) * 0.5).toFixed(1);
+    const cpY2 = p1.topY;
+    linePath += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p1.x} ${p1.y ? p1.y : p1.topY}`;
+  }
+
+  const firstX = itemsData[0].x;
+  const lastX = itemsData[itemsData.length - 1].x;
+  const areaPath = `${linePath} L ${lastX} ${gridHeight} L ${firstX} ${gridHeight} Z`;
+
+  // Dynamic Column elements — bars start INVISIBLE, JS will reveal one by one
+  const colsHTML = itemsData.map((item, index) => {
+    return `
+      <div class="exp-col" style="left: ${item.x}px;" tabindex="0" data-bar-index="${index}">
+        <!-- Callout Badge attached directly above node -->
+        <div class="exp-node-tag" style="top: ${item.topY}px;">
+          ${item.growthTag}
+        </div>
+
+        <!-- Node Dot resting PRECISELY on top of bar & curve -->
+        <div class="exp-node-dot" style="left: 50%; top: ${item.topY}px;"></div>
+
+        <!-- Realistic Column Bar: starts scaleY(0), JS adds .bar-loaded one by one -->
+        <div class="exp-real-bar" style="height: ${item.heightPx}px;"></div>
+
+        <!-- Hover Tooltip -->
+        <div class="exp-col-tooltip">
+          <span class="exp-tt-title">${item.rawText} Career Milestone</span>
+          <span class="exp-tt-sub">${item.tag}</span>
+        </div>
+
+        <!-- X-Axis Year Label -->
+        <span class="exp-x-label">${item.rawText}</span>
+      </div>
+    `;
+  }).join('');
+
+  chartContainer.innerHTML = `
+    <!-- Widget Header -->
+    <div class="exp-widget-head">
+      <span class="exp-widget-title">Career Trajectory</span>
+      <span class="exp-widget-pill">LIVE TREND</span>
+    </div>
+
+    <!-- Main Chart Body -->
+    <div class="exp-chart-body">
+      <!-- Y-Axis Scale -->
+      <div class="exp-y-axis">
+        <span>100%</span>
+        <span>50%</span>
+        <span>0%</span>
+      </div>
+
+      <!-- Canvas Stage -->
+      <div class="exp-chart-stage">
+        <!-- Gridlines -->
+        <div class="exp-grid-lines" aria-hidden="true">
+          <div class="exp-grid-line"></div>
+          <div class="exp-grid-line"></div>
+          <div class="exp-grid-line"></div>
+        </div>
+
+        <!-- SVG Curve Layer -->
+        <svg class="exp-svg-layer" viewBox="0 0 ${stageWidth} ${gridHeight}" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="expRealAreaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="rgba(56, 189, 248, 0.35)" />
+              <stop offset="100%" stop-color="rgba(56, 189, 248, 0.0)" />
+            </linearGradient>
+          </defs>
+          <path class="exp-area-path" d="${areaPath}" />
+          <path class="exp-trend-path" d="${linePath}" />
+        </svg>
+
+        <!-- Column Columns -->
+        <div class="exp-cols-wrap">
+          ${colsHTML}
+        </div>
+      </div>
+    </div>
+  `;
+
+  // ── Clear any running timers from a previous visit ──
+  if (window.expBarCycleTimer) { clearInterval(window.expBarCycleTimer); window.expBarCycleTimer = null; }
+  if (window.expBarStartTimeout) { clearTimeout(window.expBarStartTimeout); window.expBarStartTimeout = null; }
+  if (window.expAutoScrollTimeout) { clearTimeout(window.expAutoScrollTimeout); window.expAutoScrollTimeout = null; }
+  (window.expBarLoadTimers || []).forEach(t => clearTimeout(t));
+  window.expBarLoadTimers = [];
+
+  // Make chart widget visible (SVG paths, grid etc.)
+  chartContainer.classList.add('visible', 'exp-animated');
+
+  // Guard against user manually scrolling before auto-scroll fires
+  let userHasScrolled = false;
+  const onUserScroll = () => { userHasScrolled = true; };
+  setTimeout(() => {
+    window.addEventListener('wheel',     onUserScroll, { passive: true, once: true });
+    window.addEventListener('touchmove', onUserScroll, { passive: true, once: true });
+  }, 300);
+
+  // ── PHASE 1: Load bars one-by-one via JS (300ms gap each) ──
+  const barEls = chartContainer.querySelectorAll('.exp-col');
+  const BAR_STAGGER = 320;   // ms between each bar growing in
+  const BAR_ANIM   = 800;   // ms for a single bar to grow (matches CSS 0.8s)
+
+  barEls.forEach((col, i) => {
+    const t = setTimeout(() => {
+      col.classList.add('bar-loaded');
+    }, 300 + i * BAR_STAGGER);   // first bar: 300ms, then every 320ms
+    window.expBarLoadTimers.push(t);
+  });
+
+  // Total time for all bars to finish = 300 + (n-1)*320 + 800
+  const allBarsDone = 300 + (barEls.length > 0 ? (barEls.length - 1) * BAR_STAGGER + BAR_ANIM : 0);
+
+  // ── PHASE 2: Auto-scroll down after all bars have loaded ──
+  window.expAutoScrollTimeout = setTimeout(() => {
+    if (!userHasScrolled && window.scrollY < 120) {
+      const targetGrid = document.getElementById('dynamic-exp-grid') || document.querySelector('.experience.section');
+      if (targetGrid) {
+        targetGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }, allBarsDone + 200);
+
+  // ── PHASE 3: Start seamless info-tooltip cycle after scroll settles ──
+  window.expBarStartTimeout = setTimeout(() => {
+    const cols = chartContainer.querySelectorAll('.exp-col');
+    if (!cols.length) return;
+
+    let activeIndex = 0;
+    const highlightNextBar = () => {
+      cols.forEach((col, idx) => {
+        col.classList.toggle('active', idx === activeIndex);
+      });
+      activeIndex = (activeIndex + 1) % cols.length;
+    };
+
+    highlightNextBar();
+    window.expBarCycleTimer = setInterval(highlightNextBar, 2000);
+
+    chartContainer.addEventListener('mouseenter', () => {
+      if (window.expBarCycleTimer) { clearInterval(window.expBarCycleTimer); window.expBarCycleTimer = null; }
+    }, { passive: true });
+    chartContainer.addEventListener('mouseleave', () => {
+      if (!window.expBarCycleTimer) { window.expBarCycleTimer = setInterval(highlightNextBar, 2000); }
+    }, { passive: true });
+  }, allBarsDone + 1800);
+};
+
+function handleWorkRoute() {
+  const detail = document.getElementById('work-detail');
+  const listing = document.getElementById('work-listing');
+  const detailNav = document.querySelector('.detail-nav');
+  if (new URLSearchParams(window.location.search).has('project')) {
+    if (window.loadWorkDetail) window.loadWorkDetail();
+  } else {
+    if (detail) detail.hidden = true;
+    if (listing) {
+      listing.hidden = false;
+      listing.classList.remove('work-listing-enter');
+      void listing.offsetWidth;
+      listing.classList.add('work-listing-enter');
+    }
+    if (detailNav) detailNav.hidden = true;
+    document.body.classList.remove('project-detail-page');
+    document.title = 'Work — Munish Prabhu K | Digital Marketing Executive';
+    if (window.loadWorkGrid) window.loadWorkGrid();
+    reinitWorkHero();
+  }
+}
 
 function initDataLoad() {
   if (window.location.pathname.includes('work.html')) {
-    if (new URLSearchParams(window.location.search).has('project')) window.loadWorkDetail();
-    else window.loadWorkGrid();
+    handleWorkRoute();
+  } else if (window.location.pathname.includes('experience.html')) {
+    if (window.loadExpGrid) window.loadExpGrid();
+    if (window.renderHeroBarChart) window.renderHeroBarChart();
   }
 }
 
@@ -778,6 +1150,8 @@ if (document.readyState === 'loading') {
 } else {
   initDataLoad();
 }
+
+window.addEventListener('popstate', initDataLoad);
 
 initGlobe();
 
@@ -884,4 +1258,49 @@ window.openReviewModal = function(project) {
     `;
     card.querySelector('.review-modal-close').addEventListener('click', closeModal);
   });
+};
+
+
+window.initWorkAnim = function() {
+  const animContainer = document.getElementById('wf-hero-anim');
+  const folderBtn = document.getElementById('wf-folder-btn');
+  if (!animContainer || !folderBtn) return;
+  const playAnimation = (isInitial = false) => {
+    
+    animContainer.classList.remove('wf-play', 'wf-done');
+    void animContainer.offsetWidth; // Force DOM reflow
+    animContainer.classList.add('wf-play');
+    
+    if (isInitial) {
+      setTimeout(() => {
+        const grid = document.getElementById('dynamic-work-grid');
+        if (grid) {
+          const y = grid.getBoundingClientRect().top + window.scrollY - 80;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+      }, 2100);
+    }
+  };
+  
+  folderBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    playAnimation(false);
+  });
+  
+  folderBtn.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      playAnimation(false);
+    }
+  });
+
+  // Always forcefully trigger the animation sequence after a tiny delay
+  setTimeout(() => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        // Automatically scroll down only on the initial page load trigger
+        playAnimation(true); 
+      });
+    });
+  }, 100);
 };

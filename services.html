@@ -41,29 +41,42 @@
     <!-- Page Hero Header -->
     <section class="page-hero">
       <div class="hero-decor" aria-hidden="true">
-        <svg class="s-curve-svg reveal" viewBox="0 0 400 120" fill="none" style="position: absolute; right: 5%; top: 22%; width: 460px; height: 140px; z-index: 0; opacity: 0.7; overflow: visible;">
-          <defs>
-            <filter id="dot-glow" x="-50%" y="-50%" width="200%" height="200%">
-              <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#8B9FFF" flood-opacity="0.5"/>
-            </filter>
-          </defs>
-          <path class="s-curve-line" d="M 0 90 C 150 90, 250 20, 390 20" stroke="#5B7FFF" stroke-width="2" stroke-linecap="round" />
-          <circle cx="390" cy="20" r="5" fill="#5B7FFF" class="s-curve-dot" filter="url(#dot-glow)" />
-        </svg>
-        <svg class="decor-icon float-1" style="right: 20%; top: 18%; width: 36px; height: 36px;" viewBox="0 0 24 24"
-          fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
-          <path d="M21 21l-6 -6" />
-        </svg>
-        <svg class="decor-icon violet float-2" style="right: 6%; top: 54%; width: 38px; height: 38px;"
-          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 3v18h18" />
-          <path d="M7 14l4 -4l4 4l6 -6" />
-          <path d="M17 8h4v4" />
-        </svg>
-        <span class="decor-pill float-1" style="right: 8%; top: 20%;">SEO Audit</span>
-        <span class="decor-pill violet float-3" style="right: 24%; top: 62%;">Meta Ads</span>
-        <span class="decor-pill float-2" style="right: 7%; top: 70%;">Content & Analytics</span>
+        <div class="search-hero-animation is-intro" id="searchHeroAnim">
+          <!-- Central search icon that appears and zooms out -->
+          <div class="search-anim-center-icon">
+            <svg viewBox="0 0 24 24" width="46" height="46" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+
+          <!-- Floating search bar header -->
+          <div class="search-anim-bar">
+            <div class="search-anim-bar-left">
+              <svg class="search-anim-bar-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <span class="search-anim-query"></span>
+              <span class="search-anim-cursor"></span>
+            </div>
+            <span class="search-anim-badge">100% Match</span>
+          </div>
+
+          <!-- Search results metadata -->
+          <div class="search-anim-meta">
+            <span>About 5 specialized services (0.18s)</span>
+            <span class="search-meta-dot">•</span>
+            <span class="search-meta-verified">Verified Executive</span>
+          </div>
+
+          <!-- Scrolling Results Viewport -->
+          <div class="search-scroll-viewport">
+            <div class="search-scroll-track">
+              <!-- Dynamically populated by services-search-animation.js -->
+            </div>
+          </div>
+        </div>
       </div>
       <p class="eyebrow">03 / Services</p>
       <h1>Services Tailored to <em>Elevate Your Brand's Digital Presence</em></h1>
@@ -107,6 +120,7 @@
   </footer>
 
   <script type="module" src="script.js"></script>
+  <script type="module" src="services-search-animation.js"></script>
 </body>
 
 </html>
