@@ -225,6 +225,20 @@
           <input type="url" id="work-review-url" placeholder="https://example.com/review" />
         </div>
         <div class="form-group">
+          <label>Client Review Text (Shown in Client Review Card)</label>
+          <textarea id="work-review-text" placeholder='e.g. "A fantastic experience from start to finish. The results exceeded our expectations!"'></textarea>
+        </div>
+        <div class="form-group">
+          <label>Client Review Rating Stars (1 to 5 Stars)</label>
+          <select id="work-review-stars">
+            <option value="5">5 Stars (★★★★★)</option>
+            <option value="4">4 Stars (★★★★☆)</option>
+            <option value="3">3 Stars (★★★☆☆)</option>
+            <option value="2">2 Stars (★★☆☆☆)</option>
+            <option value="1">1 Star (★☆☆☆☆)</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label>Challenge</label>
           <textarea id="work-challenge" placeholder="Describe the challenge this project needed to solve."></textarea>
         </div>
@@ -430,6 +444,8 @@
           return;
         }
         const reviewUrlVal = document.getElementById('work-review-url')?.value?.trim();
+        const reviewTextVal = document.getElementById('work-review-text')?.value?.trim();
+        const reviewStarsVal = parseInt(document.getElementById('work-review-stars')?.value || 5, 10);
         const payload = {
           order: parseInt(document.getElementById('work-order').value),
           tag_line: document.getElementById('work-tag').value,
@@ -446,32 +462,36 @@
           live_site_url: document.getElementById('work-live-url').value,
           process_steps: processSteps,
           outcomes,
+          client_review_text: reviewTextVal || null,
+          client_review_stars: reviewStarsVal
         };
 
         if (reviewUrlVal) {
           payload.review_url = reviewUrlVal;
         }
         
-        let saveError = null;
-        if (id) {
-          let res = await supabase.from('work_items').update(payload).eq('id', id);
-          if (res.error && res.error.message && res.error.message.includes('review_url')) {
-            delete payload.review_url;
-            res = await supabase.from('work_items').update(payload).eq('id', id);
+        const trySave = async (dataPayload) => {
+          let res = id 
+            ? await supabase.from('work_items').update(dataPayload).eq('id', id)
+            : await supabase.from('work_items').insert(dataPayload);
+            
+          if (res.error && res.error.message && (res.error.message.includes('client_review_text') || res.error.message.includes('client_review_stars') || res.error.message.includes('review_url'))) {
+            const fallbackPayload = { ...dataPayload };
+            delete fallbackPayload.client_review_text;
+            delete fallbackPayload.client_review_stars;
+            delete fallbackPayload.review_url;
+            res = id 
+              ? await supabase.from('work_items').update(fallbackPayload).eq('id', id)
+              : await supabase.from('work_items').insert(fallbackPayload);
+            alert('Note: To save review text & star ratings to Supabase, please run the SQL query in admin/work-items-detail-fields.sql in your Supabase SQL Editor.');
           }
-          saveError = res.error;
-          if (saveError) alert('Error updating work: ' + saveError.message);
+          return res;
+        };
+        
+        const saveRes = await trySave(payload);
+        if (saveRes.error) {
+          alert('Error saving work: ' + saveRes.error.message);
         } else {
-          let res = await supabase.from('work_items').insert(payload);
-          if (res.error && res.error.message && res.error.message.includes('review_url')) {
-            delete payload.review_url;
-            res = await supabase.from('work_items').insert(payload);
-          }
-          saveError = res.error;
-          if (saveError) alert('Error inserting work: ' + saveError.message);
-        }
-
-        if (!saveError) {
           resetWorkForm();
           loadWork();
         }
@@ -516,6 +536,8 @@
         document.getElementById('work-duration').value = item.duration || '';
         document.getElementById('work-live-url').value = item.live_site_url || '';
         document.getElementById('work-review-url').value = item.review_url || '';
+        document.getElementById('work-review-text').value = item.client_review_text || item.review_text || '';
+        document.getElementById('work-review-stars').value = item.client_review_stars || item.review_stars || item.rating || 5;
         renderRepeatableRows('work-process-steps', 'process', Array.isArray(item.process_steps) ? item.process_steps : []);
         renderRepeatableRows('work-outcomes', 'outcome', Array.isArray(item.outcomes) ? item.outcomes : []);
         // Scroll to form smoothly

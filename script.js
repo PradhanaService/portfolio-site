@@ -62,7 +62,10 @@ window.initHeroAutoScroll = () => {
   const performScroll = (targetEl) => {
     cleanup();
     if (!userInteracted && window.scrollY < 50) {
-      targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const firstBox = targetEl.querySelector('.service-list article, .skill-grid, .timeline-item, article') || targetEl;
+      const navHeight = document.querySelector('.nav, .detail-nav')?.offsetHeight || 76;
+      const targetY = firstBox.getBoundingClientRect().top + window.scrollY - navHeight - 20;
+      window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
     }
   };
 
@@ -568,8 +571,7 @@ document.querySelectorAll('nav a, header a.brand, footer a, header a.talk, a.tal
       initGlobe();
       
       if (href.includes('work.html')) {
-        if (window.loadWorkGrid) window.loadWorkGrid();
-        if (window.initWorkAnim) window.initWorkAnim();
+        handleWorkRoute();
       }
       if (href.includes('experience.html')) {
         if (window.loadExpGrid) window.loadExpGrid();
@@ -648,8 +650,16 @@ function isExternalURL(value) {
 }
 
 window.loadWorkDetail = async function() {
-  const detail = document.getElementById('work-detail');
-  if (!detail) return;
+  let detail = document.getElementById('work-detail');
+  if (!detail) {
+    detail = document.createElement('div');
+    detail.id = 'work-detail';
+    detail.className = 'project-detail';
+    detail.hidden = true;
+    detail.setAttribute('aria-live', 'polite');
+    const mainContainer = document.getElementById('work-main') || document.querySelector('main') || document.body;
+    mainContainer.appendChild(detail);
+  }
 
   const projectId = new URLSearchParams(window.location.search).get('project');
   if (!projectId) {
@@ -659,15 +669,20 @@ window.loadWorkDetail = async function() {
 
   document.body.classList.add('project-detail-page');
   const listing = document.getElementById('work-listing');
-  const detailNav = document.querySelector('.detail-nav');
+  let detailNav = document.querySelector('.detail-nav');
+  if (!detailNav) {
+    detailNav = document.createElement('header');
+    detailNav.className = 'detail-nav';
+    detailNav.innerHTML = `
+      <a class="project-back" href="work.html"><span aria-hidden="true">←</span><span>Back to all projects</span></a>
+      <a class="brand" href="index.html" aria-label="MPK home">MPK<span>•</span></a>
+    `;
+    document.body.insertBefore(detailNav, document.body.firstChild);
+    detailNav.querySelector('.project-back')?.addEventListener('click', returnToWorkGrid);
+  }
   if (listing) listing.hidden = true;
   detail.hidden = false;
-  if (detailNav) detailNav.hidden = false;
-
-  detail.classList.remove('project-opening', 'project-closing');
-  void detail.offsetWidth;
-  detail.classList.add('project-opening');
-  setTimeout(() => detail.classList.remove('project-opening'), 500);
+  detailNav.hidden = false;
   window.scrollTo({ top: 0, behavior: 'instant' });
 
   console.log('[loadWorkDetail] Fetching project ID:', projectId);
@@ -697,6 +712,11 @@ window.loadWorkDetail = async function() {
   const outcomes = Array.isArray(project.outcomes)
     ? project.outcomes.filter(outcome => outcome && typeof outcome.icon_label === 'string' && typeof outcome.value === 'string' && typeof outcome.description === 'string')
     : [];
+
+  const rawReviewText = project.client_review_text || project.review_text || 'A fantastic experience from start to finish. The results exceeded our expectations!';
+  const cleanReviewText = escapeHTML(rawReviewText.trim().replace(/^["'“”]+|["'“”]+$/g, ''));
+  const ratingStarsCount = Math.min(5, Math.max(1, parseInt(project.client_review_stars || project.review_stars || project.rating || 5, 10)));
+  const starsHTML = `<span class="project-review-stars" aria-label="${ratingStarsCount} out of 5 stars">${'★'.repeat(ratingStarsCount)}${'☆'.repeat(5 - ratingStarsCount)}</span>`;
 
   const categoryColors = {
     'SEO': { a: '#223962', b: '#14203a', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>' },
@@ -783,24 +803,24 @@ window.loadWorkDetail = async function() {
     <section class="project-detail-actions reveal">
       <div class="client-review-block" style="margin-bottom: 90px;">
         <div class="project-review-card is-testimonial">
-          <span class="project-label">CLIENT REVIEW</span>
-          <strong>"A fantastic experience from start to finish. The results exceeded our expectations!"</strong>
+          <div class="project-review-header">
+            <span class="project-label">CLIENT REVIEW</span>
+            ${starsHTML}
+          </div>
+          <strong>"${cleanReviewText}"</strong>
           <span class="project-review-author">— ${client}</span>
         </div>
       </div>
-      <div class="review-portal-block">
-        <p class="project-section-index" style="margin-bottom: 16px;">05 / FEEDBACK</p>
-        <a class="project-review-card" href="${escapeHTML(reviewURL)}"${reviewTarget}>
-          <span class="project-label">REVIEW PORTAL</span>
-          <strong>Share your experience<br>with this project.</strong>
-          <span class="project-review-arrow" aria-hidden="true">↗</span>
-        </a>
-      </div>
+
       ${liveURL ? `<div class="project-detail-links"><a class="project-live" href="${escapeHTML(liveURL)}" target="_blank" rel="noopener noreferrer"><span>${liveLabel}</span><span aria-hidden="true">↗</span></a></div>` : ''}
     </section>
     </div>
     <a class="project-view-work" href="work.html">View my works <b>↗</b></a>
   `;
+  detail.classList.remove('project-opening', 'project-closing');
+  void detail.offsetWidth;
+  detail.classList.add('project-opening');
+  setTimeout(() => detail.classList.remove('project-opening'), 600);
   detail.querySelectorAll('.project-process-card.reveal').forEach((card, index) => {
     card.style.transitionDelay = `${Math.min(index * 90, 360)}ms`;
     if (window.appObserver) window.appObserver.observe(card);
@@ -1121,12 +1141,14 @@ window.renderHeroBarChart = function() {
   // Total time for all bars to finish = 300 + (n-1)*320 + 800
   const allBarsDone = 300 + (barEls.length > 0 ? (barEls.length - 1) * BAR_STAGGER + BAR_ANIM : 0);
 
-  // ── PHASE 2: Auto-scroll down after all bars have loaded ──
   window.expAutoScrollTimeout = setTimeout(() => {
     if (!userHasScrolled && window.scrollY < 120) {
       const targetGrid = document.getElementById('dynamic-exp-grid') || document.querySelector('.experience.section');
       if (targetGrid) {
-        targetGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const firstBox = targetGrid.querySelector('.timeline-item') || targetGrid;
+        const navHeight = document.querySelector('.nav, .detail-nav')?.offsetHeight || 76;
+        const targetY = firstBox.getBoundingClientRect().top + window.scrollY - navHeight - 20;
+        window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
       }
     }
   }, allBarsDone + 200);

@@ -42,165 +42,167 @@
     <a class="brand" href="index.html" aria-label="MPK home">MPK<span>•</span></a>
   </header>
 
-  <main id="work-listing">
-    <!-- Page Hero Header -->
-    <section class="page-hero">
-      <div class="hero-decor" aria-hidden="true">
-        <!-- Full-size Folder Animation Container -->
-        <div class="wf-anim reveal" id="wf-hero-anim" aria-hidden="true">
+  <main id="work-main">
+    <div id="work-listing">
+      <!-- Page Hero Header -->
+      <section class="page-hero">
+        <div class="hero-decor" aria-hidden="true">
+          <!-- Full-size Folder Animation Container -->
+          <div class="wf-anim reveal" id="wf-hero-anim" aria-hidden="true">
 
-          <!-- Animated Mouse Cursor & Ping Ripple -->
-          <div class="wf-cursor-wrap" aria-hidden="true">
-            <svg class="wf-cursor-svg" viewBox="0 0 24 24" width="22" height="22">
-              <path d="M3 2L11 22L14.5 14.5L22 11L3 2Z" fill="#060f24" stroke="var(--blue)" stroke-width="1.8"
-                stroke-linejoin="round" />
-            </svg>
-            <div class="wf-click-ping"></div>
-          </div>
-
-          <!-- Clickable Large Folder -->
-          <div class="wf-folder-wrap" id="wf-folder-btn" role="button" tabindex="0" title="Click to replay animation"
-            aria-label="Replay project categories animation">
-            <svg class="wf-folder-svg" viewBox="0 0 140 100" width="140" height="100"
-              xmlns="http://www.w3.org/2000/svg">
-              <!-- Folder back body -->
-              <rect x="2" y="28" width="136" height="70" rx="6" fill="rgba(18,42,90,.5)" stroke="rgba(120,169,255,.55)"
-                stroke-width="1.8" />
-              <!-- Folder tab -->
-              <path d="M2 28 L2 18 Q2 14 6 14 L52 14 Q56 14 58 18 L63 28 Z" fill="rgba(30,60,130,.55)"
-                stroke="rgba(120,169,255,.55)" stroke-width="1.8" />
-              <!-- Interior document lines -->
-              <line x1="16" y1="46" x2="124" y2="46" stroke="rgba(120,169,255,.2)" stroke-width="1.2" />
-              <line x1="16" y1="57" x2="100" y2="57" stroke="rgba(120,169,255,.15)" stroke-width="1.2" />
-              <line x1="16" y1="68" x2="114" y2="68" stroke="rgba(120,169,255,.15)" stroke-width="1.2" />
-              <line x1="16" y1="79" x2="90" y2="79" stroke="rgba(120,169,255,.12)" stroke-width="1.2" />
-              <!-- Folder lid (flips open) -->
-              <rect class="wf-lid" x="2" y="28" width="136" height="16" rx="5" fill="rgba(55,105,220,.25)"
-                stroke="rgba(120,169,255,.75)" stroke-width="1.8" />
-            </svg>
-          </div>
-
-          <!-- Data-Stream Connector Lines overlay -->
-          <div class="wf-connectors-wrap" aria-hidden="true">
-            <svg viewBox="0 0 280 28" width="280" height="28">
-              <path class="wf-connector-path wf-connector-1" d="M 140 0 L 34 28" />
-              <circle class="wf-connector-dot wf-dot-1" cx="34" cy="28" r="3" />
-
-              <path class="wf-connector-path wf-connector-2" d="M 140 0 L 104 28" />
-              <circle class="wf-connector-dot wf-dot-2" cx="104" cy="28" r="3" />
-
-              <path class="wf-connector-path wf-connector-3" d="M 140 0 L 176 28" />
-              <circle class="wf-connector-dot wf-dot-3" cx="176" cy="28" r="3" />
-
-              <path class="wf-connector-path wf-connector-4" d="M 140 0 L 246 28" />
-              <circle class="wf-connector-dot wf-dot-4" cx="246" cy="28" r="3" />
-            </svg>
-          </div>
-
-          <!-- 4 File Cards — horizontal row -->
-          <div class="wf-files">
-            <!-- File 1: SEO -->
-            <div class="wf-file wf-file-1">
-              <svg viewBox="0 0 54 66" width="54" height="66">
-                <path d="M4 2 L36 2 L50 16 L50 64 L4 64 Z" fill="rgba(10,24,58,.8)" stroke="rgba(120,169,255,.55)"
-                  stroke-width="1.8" />
-                <path d="M36 2 L36 16 L50 16" fill="none" stroke="rgba(120,169,255,.55)" stroke-width="1.8" />
-                <line x1="10" y1="26" x2="44" y2="26" stroke="rgba(120,169,255,.3)" stroke-width="1.2" />
-                <line x1="10" y1="33" x2="36" y2="33" stroke="rgba(120,169,255,.22)" stroke-width="1.2" />
-                <line x1="10" y1="40" x2="42" y2="40" stroke="rgba(120,169,255,.22)" stroke-width="1.2" />
-                <line x1="10" y1="47" x2="32" y2="47" stroke="rgba(120,169,255,.18)" stroke-width="1.2" />
+            <!-- Animated Mouse Cursor & Ping Ripple -->
+            <div class="wf-cursor-wrap" aria-hidden="true">
+              <svg class="wf-cursor-svg" viewBox="0 0 24 24" width="22" height="22">
+                <path d="M3 2L11 22L14.5 14.5L22 11L3 2Z" fill="#060f24" stroke="var(--blue)" stroke-width="1.8"
+                  stroke-linejoin="round" />
               </svg>
-              <div class="wf-tick">
-                <svg viewBox="0 0 22 22" width="22" height="22">
-                  <circle cx="11" cy="11" r="10" fill="#060f24" stroke="rgba(120,169,255,.95)" stroke-width="1.8" />
-                  <path class="wf-tick-path" d="M6 11 L9.5 14.5 L16 7" fill="none" stroke="var(--blue)"
-                    stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </div>
-              <span class="wf-label">SEO</span>
+              <div class="wf-click-ping"></div>
             </div>
 
-            <!-- File 2: Meta Ads -->
-            <div class="wf-file wf-file-2">
-              <svg viewBox="0 0 54 66" width="54" height="66">
-                <path d="M4 2 L36 2 L50 16 L50 64 L4 64 Z" fill="rgba(10,24,58,.8)" stroke="rgba(120,169,255,.55)"
+            <!-- Clickable Large Folder -->
+            <div class="wf-folder-wrap" id="wf-folder-btn" role="button" tabindex="0" title="Click to replay animation"
+              aria-label="Replay project categories animation">
+              <svg class="wf-folder-svg" viewBox="0 0 140 100" width="140" height="100"
+                xmlns="http://www.w3.org/2000/svg">
+                <!-- Folder back body -->
+                <rect x="2" y="28" width="136" height="70" rx="6" fill="rgba(18,42,90,.5)" stroke="rgba(120,169,255,.55)"
                   stroke-width="1.8" />
-                <path d="M36 2 L36 16 L50 16" fill="none" stroke="rgba(120,169,255,.55)" stroke-width="1.8" />
-                <line x1="10" y1="26" x2="44" y2="26" stroke="rgba(120,169,255,.3)" stroke-width="1.2" />
-                <line x1="10" y1="33" x2="36" y2="33" stroke="rgba(120,169,255,.22)" stroke-width="1.2" />
-                <line x1="10" y1="40" x2="42" y2="40" stroke="rgba(120,169,255,.22)" stroke-width="1.2" />
-                <line x1="10" y1="47" x2="32" y2="47" stroke="rgba(120,169,255,.18)" stroke-width="1.2" />
+                <!-- Folder tab -->
+                <path d="M2 28 L2 18 Q2 14 6 14 L52 14 Q56 14 58 18 L63 28 Z" fill="rgba(30,60,130,.55)"
+                  stroke="rgba(120,169,255,.55)" stroke-width="1.8" />
+                <!-- Interior document lines -->
+                <line x1="16" y1="46" x2="124" y2="46" stroke="rgba(120,169,255,.2)" stroke-width="1.2" />
+                <line x1="16" y1="57" x2="100" y2="57" stroke="rgba(120,169,255,.15)" stroke-width="1.2" />
+                <line x1="16" y1="68" x2="114" y2="68" stroke="rgba(120,169,255,.15)" stroke-width="1.2" />
+                <line x1="16" y1="79" x2="90" y2="79" stroke="rgba(120,169,255,.12)" stroke-width="1.2" />
+                <!-- Folder lid (flips open) -->
+                <rect class="wf-lid" x="2" y="28" width="136" height="16" rx="5" fill="rgba(55,105,220,.25)"
+                  stroke="rgba(120,169,255,.75)" stroke-width="1.8" />
               </svg>
-              <div class="wf-tick">
-                <svg viewBox="0 0 22 22" width="22" height="22">
-                  <circle cx="11" cy="11" r="10" fill="#060f24" stroke="rgba(120,169,255,.95)" stroke-width="1.8" />
-                  <path class="wf-tick-path" d="M6 11 L9.5 14.5 L16 7" fill="none" stroke="var(--blue)"
-                    stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </div>
-              <span class="wf-label">Meta Ads</span>
             </div>
 
-            <!-- File 3: SMM -->
-            <div class="wf-file wf-file-3">
-              <svg viewBox="0 0 54 66" width="54" height="66">
-                <path d="M4 2 L36 2 L50 16 L50 64 L4 64 Z" fill="rgba(10,24,58,.8)" stroke="rgba(120,169,255,.55)"
-                  stroke-width="1.8" />
-                <path d="M36 2 L36 16 L50 16" fill="none" stroke="rgba(120,169,255,.55)" stroke-width="1.8" />
-                <line x1="10" y1="26" x2="44" y2="26" stroke="rgba(120,169,255,.3)" stroke-width="1.2" />
-                <line x1="10" y1="33" x2="36" y2="33" stroke="rgba(120,169,255,.22)" stroke-width="1.2" />
-                <line x1="10" y1="40" x2="42" y2="40" stroke="rgba(120,169,255,.22)" stroke-width="1.2" />
-                <line x1="10" y1="47" x2="32" y2="47" stroke="rgba(120,169,255,.18)" stroke-width="1.2" />
+            <!-- Data-Stream Connector Lines overlay -->
+            <div class="wf-connectors-wrap" aria-hidden="true">
+              <svg viewBox="0 0 280 28" width="280" height="28">
+                <path class="wf-connector-path wf-connector-1" d="M 140 0 L 34 28" />
+                <circle class="wf-connector-dot wf-dot-1" cx="34" cy="28" r="3" />
+
+                <path class="wf-connector-path wf-connector-2" d="M 140 0 L 104 28" />
+                <circle class="wf-connector-dot wf-dot-2" cx="104" cy="28" r="3" />
+
+                <path class="wf-connector-path wf-connector-3" d="M 140 0 L 176 28" />
+                <circle class="wf-connector-dot wf-dot-3" cx="176" cy="28" r="3" />
+
+                <path class="wf-connector-path wf-connector-4" d="M 140 0 L 246 28" />
+                <circle class="wf-connector-dot wf-dot-4" cx="246" cy="28" r="3" />
               </svg>
-              <div class="wf-tick">
-                <svg viewBox="0 0 22 22" width="22" height="22">
-                  <circle cx="11" cy="11" r="10" fill="#060f24" stroke="rgba(120,169,255,.95)" stroke-width="1.8" />
-                  <path class="wf-tick-path" d="M6 11 L9.5 14.5 L16 7" fill="none" stroke="var(--blue)"
-                    stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </div>
-              <span class="wf-label">SMM</span>
             </div>
 
-            <!-- File 4: Analytics -->
-            <div class="wf-file wf-file-4">
-              <svg viewBox="0 0 54 66" width="54" height="66">
-                <path d="M4 2 L36 2 L50 16 L50 64 L4 64 Z" fill="rgba(10,24,58,.8)" stroke="rgba(120,169,255,.55)"
-                  stroke-width="1.8" />
-                <path d="M36 2 L36 16 L50 16" fill="none" stroke="rgba(120,169,255,.55)" stroke-width="1.8" />
-                <line x1="10" y1="26" x2="44" y2="26" stroke="rgba(120,169,255,.3)" stroke-width="1.2" />
-                <line x1="10" y1="33" x2="36" y2="33" stroke="rgba(120,169,255,.22)" stroke-width="1.2" />
-                <line x1="10" y1="40" x2="42" y2="40" stroke="rgba(120,169,255,.22)" stroke-width="1.2" />
-                <line x1="10" y1="47" x2="32" y2="47" stroke="rgba(120,169,255,.18)" stroke-width="1.2" />
-              </svg>
-              <div class="wf-tick">
-                <svg viewBox="0 0 22 22" width="22" height="22">
-                  <circle cx="11" cy="11" r="10" fill="#060f24" stroke="rgba(120,169,255,.95)" stroke-width="1.8" />
-                  <path class="wf-tick-path" d="M6 11 L9.5 14.5 L16 7" fill="none" stroke="var(--blue)"
-                    stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+            <!-- 4 File Cards — horizontal row -->
+            <div class="wf-files">
+              <!-- File 1: SEO -->
+              <div class="wf-file wf-file-1">
+                <svg viewBox="0 0 54 66" width="54" height="66">
+                  <path d="M4 2 L36 2 L50 16 L50 64 L4 64 Z" fill="rgba(10,24,58,.8)" stroke="rgba(120,169,255,.55)"
+                    stroke-width="1.8" />
+                  <path d="M36 2 L36 16 L50 16" fill="none" stroke="rgba(120,169,255,.55)" stroke-width="1.8" />
+                  <line x1="10" y1="26" x2="44" y2="26" stroke="rgba(120,169,255,.3)" stroke-width="1.2" />
+                  <line x1="10" y1="33" x2="36" y2="33" stroke="rgba(120,169,255,.22)" stroke-width="1.2" />
+                  <line x1="10" y1="40" x2="42" y2="40" stroke="rgba(120,169,255,.22)" stroke-width="1.2" />
+                  <line x1="10" y1="47" x2="32" y2="47" stroke="rgba(120,169,255,.18)" stroke-width="1.2" />
                 </svg>
+                <div class="wf-tick">
+                  <svg viewBox="0 0 22 22" width="22" height="22">
+                    <circle cx="11" cy="11" r="10" fill="#060f24" stroke="rgba(120,169,255,.95)" stroke-width="1.8" />
+                    <path class="wf-tick-path" d="M6 11 L9.5 14.5 L16 7" fill="none" stroke="var(--blue)"
+                      stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </div>
+                <span class="wf-label">SEO</span>
               </div>
-              <span class="wf-label">Analytics</span>
+
+              <!-- File 2: Meta Ads -->
+              <div class="wf-file wf-file-2">
+                <svg viewBox="0 0 54 66" width="54" height="66">
+                  <path d="M4 2 L36 2 L50 16 L50 64 L4 64 Z" fill="rgba(10,24,58,.8)" stroke="rgba(120,169,255,.55)"
+                    stroke-width="1.8" />
+                  <path d="M36 2 L36 16 L50 16" fill="none" stroke="rgba(120,169,255,.55)" stroke-width="1.8" />
+                  <line x1="10" y1="26" x2="44" y2="26" stroke="rgba(120,169,255,.3)" stroke-width="1.2" />
+                  <line x1="10" y1="33" x2="36" y2="33" stroke="rgba(120,169,255,.22)" stroke-width="1.2" />
+                  <line x1="10" y1="40" x2="42" y2="40" stroke="rgba(120,169,255,.22)" stroke-width="1.2" />
+                  <line x1="10" y1="47" x2="32" y2="47" stroke="rgba(120,169,255,.18)" stroke-width="1.2" />
+                </svg>
+                <div class="wf-tick">
+                  <svg viewBox="0 0 22 22" width="22" height="22">
+                    <circle cx="11" cy="11" r="10" fill="#060f24" stroke="rgba(120,169,255,.95)" stroke-width="1.8" />
+                    <path class="wf-tick-path" d="M6 11 L9.5 14.5 L16 7" fill="none" stroke="var(--blue)"
+                      stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </div>
+                <span class="wf-label">Meta Ads</span>
+              </div>
+
+              <!-- File 3: SMM -->
+              <div class="wf-file wf-file-3">
+                <svg viewBox="0 0 54 66" width="54" height="66">
+                  <path d="M4 2 L36 2 L50 16 L50 64 L4 64 Z" fill="rgba(10,24,58,.8)" stroke="rgba(120,169,255,.55)"
+                    stroke-width="1.8" />
+                  <path d="M36 2 L36 16 L50 16" fill="none" stroke="rgba(120,169,255,.55)" stroke-width="1.8" />
+                  <line x1="10" y1="26" x2="44" y2="26" stroke="rgba(120,169,255,.3)" stroke-width="1.2" />
+                  <line x1="10" y1="33" x2="36" y2="33" stroke="rgba(120,169,255,.22)" stroke-width="1.2" />
+                  <line x1="10" y1="40" x2="42" y2="40" stroke="rgba(120,169,255,.22)" stroke-width="1.2" />
+                  <line x1="10" y1="47" x2="32" y2="47" stroke="rgba(120,169,255,.18)" stroke-width="1.2" />
+                </svg>
+                <div class="wf-tick">
+                  <svg viewBox="0 0 22 22" width="22" height="22">
+                    <circle cx="11" cy="11" r="10" fill="#060f24" stroke="rgba(120,169,255,.95)" stroke-width="1.8" />
+                    <path class="wf-tick-path" d="M6 11 L9.5 14.5 L16 7" fill="none" stroke="var(--blue)"
+                      stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </div>
+                <span class="wf-label">SMM</span>
+              </div>
+
+              <!-- File 4: Analytics -->
+              <div class="wf-file wf-file-4">
+                <svg viewBox="0 0 54 66" width="54" height="66">
+                  <path d="M4 2 L36 2 L50 16 L50 64 L4 64 Z" fill="rgba(10,24,58,.8)" stroke="rgba(120,169,255,.55)"
+                    stroke-width="1.8" />
+                  <path d="M36 2 L36 16 L50 16" fill="none" stroke="rgba(120,169,255,.55)" stroke-width="1.8" />
+                  <line x1="10" y1="26" x2="44" y2="26" stroke="rgba(120,169,255,.3)" stroke-width="1.2" />
+                  <line x1="10" y1="33" x2="36" y2="33" stroke="rgba(120,169,255,.22)" stroke-width="1.2" />
+                  <line x1="10" y1="40" x2="42" y2="40" stroke="rgba(120,169,255,.22)" stroke-width="1.2" />
+                  <line x1="10" y1="47" x2="32" y2="47" stroke="rgba(120,169,255,.18)" stroke-width="1.2" />
+                </svg>
+                <div class="wf-tick">
+                  <svg viewBox="0 0 22 22" width="22" height="22">
+                    <circle cx="11" cy="11" r="10" fill="#060f24" stroke="rgba(120,169,255,.95)" stroke-width="1.8" />
+                    <path class="wf-tick-path" d="M6 11 L9.5 14.5 L16 7" fill="none" stroke="var(--blue)"
+                      stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </div>
+                <span class="wf-label">Analytics</span>
+              </div>
             </div>
           </div>
+          <!-- End Folder Animation Container -->
         </div>
-        <!-- End Folder Animation Container -->
-      </div>
-      <p class="eyebrow">04 / Featured Projects</p>
-      <h1>Campaigns and Projects <em>That Delivered Measurable Results</em></h1>
-      <p class="lede">Real-world marketing strategies, market research, SEO analysis, and ad campaigns delivered for
-        client brands.</p>
-    </section>
+        <p class="eyebrow">04 / Featured Projects</p>
+        <h1>Campaigns and Projects <em>That Delivered Measurable Results</em></h1>
+        <p class="lede">Real-world marketing strategies, market research, SEO analysis, and ad campaigns delivered for
+          client brands.</p>
+      </section>
 
-    <!-- Case Studies Section -->
-    <section class="work section">
-      <div class="case-grid" id="dynamic-work-grid">
-        <!-- Work items will be loaded dynamically via Supabase -->
-      </div>
-    </section>
+      <!-- Case Studies Section -->
+      <section class="work section">
+        <div class="case-grid" id="dynamic-work-grid">
+          <!-- Work items will be loaded dynamically via Supabase -->
+        </div>
+      </section>
+    </div>
+
+    <div id="work-detail" class="project-detail" hidden aria-live="polite"></div>
   </main>
-
-  <main id="work-detail" class="project-detail" hidden aria-live="polite"></main>
 
   <footer>
     <a class="brand" href="index.html">MPK<span>•</span></a>

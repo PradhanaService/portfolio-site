@@ -8,5 +8,7 @@ alter table public.work_items
   add column if not exists duration text,
   add column if not exists live_site_url text,
   add column if not exists review_url text,
+  add column if not exists client_review_text text,
+  add column if not exists client_review_stars integer default 5,
   add column if not exists process_steps jsonb not null default '[]'::jsonb,
   add column if not exists outcomes jsonb not null default '[]'::jsonb;

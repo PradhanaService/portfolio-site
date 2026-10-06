@@ -140,10 +140,10 @@ function initServicesSearchAnimation() {
             // Phase 3: Start Scrolling SERP Cards (after 250ms)
             schedule(() => {
               container.classList.add('is-scrolling');
+              window.dispatchEvent(new CustomEvent('searchAnimationComplete'));
 
               // Phase 4: Loop Restart after 6.5s
               schedule(() => {
-                window.dispatchEvent(new CustomEvent('searchAnimationComplete'));
                 container.style.opacity = '0';
                 schedule(() => {
                   startAnimation();

@@ -177,23 +177,55 @@
   .project-process-card h3 { font-size: 17px; }
   .project-process-card p { grid-column: 2; font-size: 12px; }
   .project-process-card .project-process-arrow { grid-column: 3; grid-row: 1; }
-  .project-review-card { min-height: 150px; padding: 25px; }
-  .project-review-card strong { font-size: 24px; }
+  .project-review-card,
+  .project-review-card.is-testimonial {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: auto !important;
+    padding: 16px 18px !important;
+    border-radius: 12px !important;
+    gap: 8px !important;
+  }
+  .project-review-header {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+  .project-review-stars {
+    font-size: 14px !important;
+    letter-spacing: 2px !important;
+  }
+  .project-review-card strong,
+  .project-review-card.is-testimonial strong {
+    font-size: clamp(14px, 4.2vw, 17px) !important;
+    line-height: 1.35 !important;
+    margin: 4px 0 !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+  }
+  .project-review-card.is-testimonial .project-review-author {
+    align-self: flex-end !important;
+    font-size: 12px !important;
+    margin-top: 2px !important;
+  }
   .project-detail-links { gap: 10px; padding-top: 14px; }
   .project-view-work { padding: 10px 14px; font-size: 11px; }
-  .project-outcomes { padding-bottom: 62px; }
-  .project-outcomes-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-  .project-outcome-card { min-height: 165px; padding: 18px; }
-  .project-outcome-card strong { margin-top: 25px; font-size: 34px; }
+  .project-outcomes { padding-bottom: 40px; }
+  .project-outcomes-grid { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+  .project-outcome-card { min-height: auto; padding: 14px 16px; border-radius: 10px; }
+  .project-outcome-card strong { margin: 12px 0 4px; font-size: clamp(22px, 6vw, 28px); word-break: break-word; }
+  .project-outcome-card p { font-size: 11px; line-height: 1.4; word-break: break-word; }
   .case.large {
     grid-column: auto;
   }
   .large .case-image,
   .case-image {
-    height: 250px;
+    height: 190px;
   }
   .case-meta h3 {
-    font-size: 21px;
+    font-size: 18px;
   }
   .timeline-container {
     padding-left: 36px;
